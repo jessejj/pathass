@@ -384,7 +384,10 @@ dim currentSpecimenGross2
 For Index = 0 to Ubound(currentSpecimenGross)
     'For Each Line in currentSpecimenGross
         If InStr(Index, "Number of pieces:") > 0 And InStr(Index, "[") = 0 Then
-            numberOfPieces, extraBlocks = Cint(Trim(Mid(Line, 17+InStr(Index, "Number of pieces:"))))
+            'numberOfPieces, extraBlocks = Cint(Trim(Mid(Line, 17+InStr(Index, "Number of pieces:"))))
+		numberOfPiecesText = Trim(Mid(Line, 17+InStr(Index, "Number of pieces:")))
+		If Not IsNumeric(NumberOfPiecesText) Then Exit Sub
+		numberOfPieces = Cint(numberOfPiecesText)
             Exit For
         End If
  Next
