@@ -1,4 +1,4 @@
-Option Explicit
+'Option Explicit
 Dim scriptVersion
 scriptVersion = "Next Item Script 2020.07.21" 'by Jesse Pelley
 
@@ -372,19 +372,27 @@ Sub blockAutofill
     
     If singleCase Then
         currentSpecimenGross = Split(blockText, vbCr)
+	currentSpecimenGross2 = currentSpecimenGross 
     Else
         'msgbox specimenNumber
         currentSpecimenGross = Split(blockText, specimenNumber & ". The specimen")
-dim currentSpecimenGross2
         currentSpecimenGross2 = Split(currentSpecimenGross(1), vbCr)
     End If
 
 
 
-For Index = 0 to Ubound(currentSpecimenGross)
+For Index = 0 to Ubound(currentSpecimenGross2)
     'For Each Line in currentSpecimenGross
-        If InStr(Index, "Number of pieces:") > 0 And InStr(Index, "[") = 0 Then
-            numberOfPieces, extraBlocks = Cint(Trim(Mid(Line, 17+InStr(Index, "Number of pieces:"))))
+'Msgbox currentSpecimenGross2(Index)
+
+        If InStr(currentSpecimenGross2(Index), "Number of pieces:") > 0 And InStr(currentSpecimenGross2(Index), "[") = 0 Then
+		numberOfPiecesText = Mid(currentSpecimenGross2(Index), 17+InStr(currentSpecimenGross2(Index), "Number of pieces:"))
+
+Say numberOfPiecesText 
+
+		If Not IsNumeric(NumberOfPiecesText) Then Exit Sub
+
+		numberOfPieces = Cint(numberOfPiecesText)
             Exit For
         End If
  Next
