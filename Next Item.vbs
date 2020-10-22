@@ -18,7 +18,7 @@ pauseTriggers(7) = "."
 pauseTriggers(8) = "to"
 pauseTriggers(9) = ":"
 pauseTriggers(10) = "/"
-pauseTriggers(11) = "by"
+pauseTriggers(11) = "y " 'by
 
 
 Dim numberofBlanks, previousnumberofBlanks, advancedFields, CaseID
@@ -57,7 +57,6 @@ Do
 
     previousnumberofBlanks = numberofBlanks
     numberofBlanks = countBlanks
-    If InStr(docText, userInitials) > 0 Then exit do
 
     WScript.Sleep pauseTime
 
@@ -227,10 +226,10 @@ Sub blockAutofill
         If InStr(arrayofLines(Index), "Number of pieces:") > 0 And InStr(arrayofLines(Index), "[") = 0 Then
 		numberOfPiecesText = Mid(arrayofLines(Index), 17+InStr(arrayofLines(Index), "Number of pieces:"))
 
-        Say "Number of pieces:" & numberOfPiecesText 
+        If WaitMessage = True Then Say "Number of pieces:" & numberOfPiecesText 
 
 		If Not IsNumeric(NumberOfPiecesText) Then 
-            Say "Not Numeric"    
+            If WaitMessage = True Then Say "Not Numeric"    
             Exit Sub
         End If
 
