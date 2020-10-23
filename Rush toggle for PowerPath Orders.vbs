@@ -24,10 +24,10 @@ If Not Shell.AppActivate("PowerPath") Then
     Wscript.Quit
 End If
 
-For LoopIndex = 1 To NumberOfLoops
+For LoopIndex = 1 To NumberOfLoops 
     For StringIndex = 0 to UBound(Strings)
-        Wscript.Sleep 10
-        Shell.Sendkeys Strings(Index), True
+        Wscript.Sleep 100
+        Shell.Sendkeys Strings(StringIndex), True
     Next
     If NumberOfLoops > 30 Then Exit For
 Next
