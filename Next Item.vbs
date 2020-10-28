@@ -1,24 +1,27 @@
 Dim scriptVersion
-scriptVersion = "Next Item Script 2020.10.20" 'by Jesse Pelley
+scriptVersion = "Next Item Script 2020.10.28" 'by Jesse Pelley
 
 'This script was written to help Pathologist Assistants describe specimens more effeciently while they dissect
 
 pauseTime=250           'in milliseconds
 cassetteKeyFill=True    'autofills the first block and guesses the last block in a range based on the number of pieces
 
-Dim pauseTriggers(11)   'punctuation and words that imply that the user does not want to move to the next item
-pauseTriggers(0) = ","
-pauseTriggers(1) = ";"
-pauseTriggers(2) = "nd" 'and
-pauseTriggers(3) = "("
-pauseTriggers(4) = ")"
-pauseTriggers(5) = "-"
-pauseTriggers(6) = "?"
-pauseTriggers(7) = "."
-pauseTriggers(8) = "to"
-pauseTriggers(9) = ":"
-pauseTriggers(10) = "/"
-pauseTriggers(11) = "y " 'by
+Dim pauseSymbols(7)   'symbols that imply that the user does not want to move to the next item
+pauseSymbols(0) = ","
+pauseSymbols(1) = ";"
+pauseSymbols(2) = "("
+pauseSymbols(3) = "-"
+pauseSymbols(4) = "?"
+pauseSymbols(5) = "."
+pauseSymbols(6) = ":"
+pauseSymbols(7) = "/"
+
+Dim pauseWords(4)
+pauseWords(0) = " and"
+pauseWords(1) = " by"
+pauseWords(2) = " the"
+pauseWords(3) = " to"
+pauseWords(4) = " that"
 
 
 Dim numberofBlanks, previousnumberofBlanks, advancedFields, CaseID
@@ -79,14 +82,16 @@ Do
 
 Loop Until numberofBlanks = 0
 
-Say scriptVersion & " Finished."
+Say scriptVersion & " Finished. " & advancedFields & " fields cleared."
 Set wordObj = Nothing
+WScript.Sleep 3000
 
 Function waitLoop
 
     Do 
         WScript.Sleep pauseTime 
         If InStr(wordObj.Selection.Text, "]") = 0 Then 'Fill in not present or filled out, so stop waiting
+            Say "Resuming..."
             Exit Do
         End If
     Loop
@@ -138,15 +143,27 @@ If InStr(wordObj.Selection.text, "]") > 0 Then Exit Sub
 End Sub
 
 Function incompleteParagraph
-    dim lastCharacters, Index
+    dim lastCharacters, Index, lastWord
     Set lastCharacters = wordObj.Selection.Range
     lastCharacters.Start = lastCharacters.Start - 2
 
-    For Index = 0 to Ubound(pauseTriggers)
-        If InStr(lastCharacters, pauseTriggers(Index)) > 0 Then
+    For Index = 0 to Ubound(pauseSymbols)
+        If InStr(lastCharacters, pauseSymbols(Index)) > 0 Then
             incompleteParagraph = True
-            exit for
-        end If
+            Say "Paused because of '" & pauseSymbols(Index) & "'"
+            Exit For
+        End If
+    Next
+
+    Set lastWord = wordObj.Selection.Range
+    lastWord.Start = lastWord.Start - 5
+
+    For Index = 0 to Ubound(pauseWords)
+        If InStr(lastCharacters, pauseWords(Index)) > 0 Then
+            incompleteParagraph = True
+            Say "Paused because of '" & pauseWords(Index) & "'"
+            Exit For
+        End If
     Next
 
 End Function
@@ -230,12 +247,12 @@ Sub blockAutofill
 
 		If Not IsNumeric(NumberOfPiecesText) Then 
             If WaitMessage = True Then Say "Not Numeric"    
-            Exit Sub
-        End If
-
-		numberOfPieces = Cint(numberOfPiecesText)
+            numberOfPieces = 0
+        Else 
+		    numberOfPieces = Cint(numberOfPiecesText)
             Exit For
         End If
+
     Next
 
     'logic for Number of pieces in blocks, 5 pieces for each block
