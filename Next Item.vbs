@@ -243,15 +243,16 @@ Sub blockAutofill
         If InStr(arrayofLines(Index), "Number of pieces:") > 0 And InStr(arrayofLines(Index), "[") = 0 Then
 		numberOfPiecesText = Mid(arrayofLines(Index), 17+InStr(arrayofLines(Index), "Number of pieces:"))
 
-        If WaitMessage = True Then Say "Number of pieces:" & numberOfPiecesText 
+        	If WaitMessage = True Then Say "Number of pieces:" & numberOfPiecesText 
 
 		If Not IsNumeric(NumberOfPiecesText) Then 
-            If WaitMessage = True Then Say "Not Numeric"    
-            numberOfPieces = 0
-        Else 
-		    numberOfPieces = Cint(numberOfPiecesText)
-            Exit For
-        End If
+            		If WaitMessage = True Then Say "Not Numeric"    
+            		numberOfPieces = 0
+        	Else 
+		    	numberOfPieces = Cint(numberOfPiecesText)
+            		Exit For
+        	End If
+	End If											
 
     Next
 
