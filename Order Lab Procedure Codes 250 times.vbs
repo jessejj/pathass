@@ -8,27 +8,35 @@ For Attempt = 0 To 5
     If IsNumeric(NumberOfLoops) Then Exit For
 Next
 
-Dim Strings(7)
+Dim Strings(6)
 
-Strings(0) = "~"    	'opens order
-Strings(1) = LabProcedure
-Strings(2) = "~"        'confirm with Enter
-Strings(3) = "{end}"    'go to quantity
-Strings(4) = "250"      'BATCH 250
-Strings(5) = "~"        'confirm
-Strings(6) = "{home}"   'go back to Code field
-Strings(7) = "{down}"   'New line
+Strings(0) = "{F2}250"    	'opens order
+Strings(1) = "~"        'confirm
+Strings(2) = "{home}"   'go back to Code field
+Strings(3) = LabProcedure
+Strings(4) = "~"        'confirm
+Strings(5) = "{tab 3}"        'confirm with Enter
+Strings(6) = "^i"   'New line
 
 Set Shell = CreateObject("Wscript.Shell")
+
 
 If Not Shell.AppActivate("New Orders") Then
     MsgBox "PowerPath is not open"
     Wscript.Quit
 End If
 
+Shell.SendKeys "{end}", True
+
 For LoopIndex = 1 To NumberOfLoops
+
+If Not Shell.AppActivate("New Orders") Then
+    MsgBox "PowerPath is not open"
+    Wscript.Quit
+End If
+
     For StringIndex = 0 To UBound(Strings)
-        Wscript.Sleep 100
+        Wscript.Sleep 50
         Shell.SendKeys Strings(StringIndex), True
     Next
     If NumberOfLoops > 1000 Then Exit For
