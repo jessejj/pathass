@@ -1,5 +1,5 @@
 Dim scriptVersion
-scriptVersion = "Next Item Script 2020.10.28" 'by Jesse Pelley
+scriptVersion = "Next Item Script 2020.1106" 'by Jesse Pelley
 
 'This script was written to help Pathologist Assistants describe specimens more effeciently while they dissect
 
@@ -16,12 +16,13 @@ pauseSymbols(5) = "."
 pauseSymbols(6) = ":"
 pauseSymbols(7) = "/"
 
-Dim pauseWords(4)
+Dim pauseWords(5)
 pauseWords(0) = " and"
 pauseWords(1) = " by"
 pauseWords(2) = " the"
 pauseWords(3) = " to"
 pauseWords(4) = " that"
+pauseWords(5) = " with"
 
 
 Dim numberofBlanks, previousnumberofBlanks, advancedFields, CaseID
@@ -91,7 +92,7 @@ Function waitLoop
     Do 
         WScript.Sleep pauseTime 
         If InStr(wordObj.Selection.Text, "]") = 0 Then 'Fill in not present or filled out, so stop waiting
-            Say "Resuming..."
+            'Say "Resuming..."
             Exit Do
         End If
     Loop
