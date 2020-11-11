@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <head>
-    <title>Grossing Scoreboard</title>
+<meta http-equiv="refresh" content="300" />
+    <title>Grossing Leaderboard</title>
  
 	<HTA:APPLICATION
 		APPLICATIONNAME = "Jesse's first HTA HTML Application"
@@ -8,8 +9,6 @@
 		SINGLEINSTANCE = "Yes"
 	/>
 </head>
-
-
 
 <script language="VBScript">
 	Sub QueryDB()
@@ -31,13 +30,46 @@
 		SQL = SQL & "WHERE (((SaveGrossRecords.[ProcedureDate])>0) AND ((SaveGrossRecords.[SaveTime])>Date())) "
 		SQL = SQL & "ORDER BY SaveGrossRecords.[ProcedureDate] ASC"
 
-		MsgBox SQL
 
 		myRecordSet.Open SQL
 
-		document.getElementById( "Row1" ).innerHTML = "<img src=data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEgAAABICAMAAABiM0N1AAAABGdBTUEAALGPC/xhBQAAAAFzUkdCAK7OHOkAAABdUExURUdwTAAAAPA4EAAAAAAAAAAAAAAAAAAAAAAAAAAAAP+6ANWOALEFEv/+/u6pAP3YyTkSAN4wDvRlSOKcAMUmDPmun2QRAveNeJ1xAGFFAJMdBcSPAPynBfmAA//FIz8jjXcAAAAKdFJOUwAf//9+sQjTS/PVaQLlAAACk0lEQVRYw+2Y23arIBCGPaEoiYeSJhq17/+YFdgCgyhjkrWv+t90tQ4/Mx8jWKLoT0jlWVGmL6gsstz2iYv0ZRWxlc8bPouTySlL31KmjURCbZckSXO9Xr8Socuu5OOvJbBZfnatSEkbCc6d/XyJ2PORcXLGh4wTxLdGVko3v88tcSYERqK0e4JKyZ3vDkqTsNVc32vO/pRU0GMJ+lZBELaiLZ8kS8w12eXtxrRw+SMqjJ/ObN1eYSbrpxhH7dYmqYd3YOkV6ZSAdy0uPbxvbufdPKTLGL61Xt536HMPkDavm8u7g0ZdgPQB76ft8wySPuDdGp82TBrHG0MawxtFGsPbV/SWdJg3lvQBb2WEJb3h/dBjLmLMxYPOT3rDG9BofYuZHR1vhdsw8zxNdT1N84wlveG91NFMla0GLAA9PnKJJps0P5WjHxRpl/dceTTrJo1DXwEr76nyakKQVrj/8d7xEU6CdJmHP0zkdwDXA2vOFvFa/4FjCK3r1utRTEt794g1W0+mNRsGtGYFz/ujhLjXRztxTEqijwbgI0dDpyFMKRdtNKpwe+yak3oyhteNGkLcHuoQb4O1ZaYy5jNiprYsiKh3SAOjWncACS4+czoIGHG9bscNIFhDvI6RmqUG32k+iQ6pwkaViPs/Rh8rDQmbBWF/bPn3GlL/OiEbkhra3GfEDWt68qWFRuiXdruNACP8NqJqY8cbG0PttZ/aaj+3+atDe9w/jkbkcaQO7ZTtHZASUBkjjFRxVk5AMh9MYeZ/5d7n06eogx86tZvyWHvOR///PoD6xiE967NwWi84hl60T836Yb3EoNEpxcR/WUDi6Kyo556joNErogTc4JTkNRu5q9CMiPugsiAZzaM/vadf5bBbGKJ2DicAAAAASUVORK5CYII width='30' height='30'>" & "USER " & myRecordSet.Fields(4).value & " Grossed " & myRecordSet.Fields(2).value & " from " & myRecordSet.Fields(0).value & " (" & myRecordSet.Fields(3).value & ")"
-		document.getElementById( "Row2" ).innerHTML = "<img src=data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEgAAABICAMAAABiM0N1AAAABGdBTUEAALGPC/xhBQAAAAFzUkdCAK7OHOkAAABjUExURUdwTAAAAAAAAC3T9wAAAAAAAAAAAAAAAAAAAAAAAM3NzXZ2dgB62f7//6mpqsHCwtn1/JaWliS95hMxOEzZ+HTg+IGBgaXs/AB10SKryQxXZ0xMTKnP2RZ8khqOp1V3fwd3wLYO8tAAAAAKdFJOUwCI//8IH3TUS7HVhcskAAACtUlEQVRYw+2Y6ZKqMBCFWQXMNRhZRgR8/8cckkCWpoF2qftrTtXUqCSHPl82NAj+RFRyyqK3lJ0S1yd900ZZpU49H/hMTramU/SRTsZIFlTd4ji+Xi6XOpb6tyl1uZ4aXqf/t0qWZIykrfSJm/n61GLLR7VTd2xUO9l3bWQb6JLu4G8pyLmhZySjPbyS8XD32cdB8PCiKdiduvAzNflxwoF6bqBR58PWtOHNTG+M9EW3rvzhD3JpPJr4bknG7e4VpEGOsl/uTu0C5X0HQkkX3lpLI4R3B2deh5COUn/VAt6NbWj1ANkhabvcKsuyNqVb6ejm6or0Du/R9RkPSaO87U1nVYAgQnrFu8F4d2BMMdIU3ijpEN9uAe/Y442FXpN2eD/Bahohaf3xc4P0Dm9tRCW9w/tp66SQ1gqx4akWcmAww73jLQMTpm6GoZw0DE1NJI3yHs6urjTSDu95izuvNO/C+6Qh7+GMaKCQ9nmjPsrpkLTHe8NnEoG0Q4kv3UouWsZawUvzSeSdQPvjxpZOghmJxaoljNlyMs1dOPO0lFlRSsqdYMDHOHFKSZJQ7/gYWO67/ngeJfJmQjf3fLRTW9qSkuNkuqPi7I67Iq5fHmcLTbKSYUasNNnCQ0QtQtoY6aziEFJmxkzgRsJA2p8AMryuvl2Nu3rV2tl9aOQQ0dJjxZlDjWRUAiPhRX3ZqPVilctbarQVbB3L+JBhw+EXcCpwswEU/2dCfm2JOIu2xIzIixZuI8CIvo18b2P72lZL2PwZbfPXx5HYPo4E5cA2h3bEt85HBej4wDbhbE2+VD2UYPa7MsN8WIR9bdh/kIiqVTyun9/DgKz5+3vv5RN99Fo9lpP0arl89ONtv3ySBy8pLfAfC4o0eFU58jtHlgfvKAdVFe/ZqF0lDwtVWFaEeRL86TP9Au8XW/ZYgS+oAAAAAElFTkSuQmCC width='30' height='30'>" & "Row 2"
-		document.getElementById( "Row3" ).innerHTML = "<img src=data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEgAAABICAMAAABiM0N1AAAABGdBTUEAALGPC/xhBQAAAAFzUkdCAK7OHOkAAABpUExURUdwTAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA7HBPeKScxPBwZ9Bv///95nI++EQgu2AzHNJeZ1MuL44QifA1MqEo7lilzZVAAvAMx0OrzvuQJVAJhSKb5pNdGYQfTav6OhL3GvIOO6FiMAAAAKdFJOUwB0iP+xCB/TS/OdbSw3AAACqElEQVRYw+2Y25aCIBSGTfBcaZpOOpo17/+QI6DAFhAq11zNf9NaiT97f5uTeN6/HBUcogS9oSQ6BLJPGKG3FYVSPB/4TE4ipgP6SAduRAJqL2maXs/nc5kSnYyij8up4XX6vbQkJG5EOBOf9DY9/6YtLyYf2i79nhreaDtCXDUSDdJa71Onqw6BEUmtByEbQ2L9CQQ9SI3CZn19TU2+zCEpjSBsRjtddWYlPamF5fdiYnxKrbzXIE/kvVge2hhpeBsCgqQRBnMtTDS86/XIq3lPgnQSwlmr5d1Dn54HpCctphvjXU68ryUPXegCnyqkFd4ipJPso30Yq0uSxFsMgVb4tOsRq5JWeIu61DrSNyNphTdsLgW06sLXL7eRKQFT0ippO+/ekfQGb2bkStrG++RMmsnX8W5fIm3gXf48x2LS+PwpHUnreD/GTNL4cCMt8WaL1iNT9HAhveb9zDR68kEa2k4BC+8x02p0IA14G3yIEyGdBPaDCT0HdMt7RZUfJ+VVsfzTuRBa6jYsNtSFKV+sBoeazQE18yvVEaia/27AprgVUKf14U6dS0hYBER98gVNLjk1dkoBGUZ31hz4zE6M091eN5qZ9KJceMnYnpvPMyuOOqM5pMY6JDGvPSTNjSqeG7YWvxOZqUY5r9v2ACCsC5EI4C0sswKc03RCilGeaYwo7b8xIqlVe6S2G2xR/k2jwVr+3QbkblNEmrTFR5N2t2Vkv4Vtt6V2v8Wfbdp3vh3lbDviNpS0y3bENm2xsa1FASWhgxFLTsQEReNxSUx8Kw86nwHpPhu2DxKoUdLrGuR2gFh/vzcgv3uDXouHclouOJqhq4qi6oZmucSIvZcUYv1lAQ69VxVr7jmi2HtHMQY3OAl+z4auKrGPyX1QEmE/Drx/faZfyfpxnqnxQUkAAAAASUVORK5CYII width='30' height='30'>" & "Row 3"
+		document.getElementById( "Row1" ).innerHTML = "<img src=data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEgAAABICAMAAABiM0N1AAAABGdBTUEAALGPC/xhBQAAAAFzUkdCAK7OHOkAAABdUExURUdwTAAAAPA4EAAAAAAAAAAAAAAAAAAAAAAAAAAAAP+6ANWOALEFEv/+/u6pAP3YyTkSAN4wDvRlSOKcAMUmDPmun2QRAveNeJ1xAGFFAJMdBcSPAPynBfmAA//FIz8jjXcAAAAKdFJOUwAf//9+sQjTS/PVaQLlAAACk0lEQVRYw+2Y23arIBCGPaEoiYeSJhq17/+YFdgCgyhjkrWv+t90tQ4/Mx8jWKLoT0jlWVGmL6gsstz2iYv0ZRWxlc8bPouTySlL31KmjURCbZckSXO9Xr8Socuu5OOvJbBZfnatSEkbCc6d/XyJ2PORcXLGh4wTxLdGVko3v88tcSYERqK0e4JKyZ3vDkqTsNVc32vO/pRU0GMJ+lZBELaiLZ8kS8w12eXtxrRw+SMqjJ/ObN1eYSbrpxhH7dYmqYd3YOkV6ZSAdy0uPbxvbufdPKTLGL61Xt536HMPkDavm8u7g0ZdgPQB76ft8wySPuDdGp82TBrHG0MawxtFGsPbV/SWdJg3lvQBb2WEJb3h/dBjLmLMxYPOT3rDG9BofYuZHR1vhdsw8zxNdT1N84wlveG91NFMla0GLAA9PnKJJps0P5WjHxRpl/dceTTrJo1DXwEr76nyakKQVrj/8d7xEU6CdJmHP0zkdwDXA2vOFvFa/4FjCK3r1utRTEt794g1W0+mNRsGtGYFz/ujhLjXRztxTEqijwbgI0dDpyFMKRdtNKpwe+yak3oyhteNGkLcHuoQb4O1ZaYy5jNiprYsiKh3SAOjWncACS4+czoIGHG9bscNIFhDvI6RmqUG32k+iQ6pwkaViPs/Rh8rDQmbBWF/bPn3GlL/OiEbkhra3GfEDWt68qWFRuiXdruNACP8NqJqY8cbG0PttZ/aaj+3+atDe9w/jkbkcaQO7ZTtHZASUBkjjFRxVk5AMh9MYeZ/5d7n06eogx86tZvyWHvOR///PoD6xiE967NwWi84hl60T836Yb3EoNEpxcR/WUDi6Kyo556joNErogTc4JTkNRu5q9CMiPugsiAZzaM/vadf5bBbGKJ2DicAAAAASUVORK5CYII width='30' height='30'>" & myRecordSet.Fields(4).value & " grossed " & myRecordSet.Fields(2).value & " from " & myRecordSet.Fields(0).value & " (" & myRecordSet.Fields(3).value & ")"
+
+myRecordSet.Move 1
+
+		document.getElementById( "Row2" ).innerHTML = "<img src=data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEgAAABICAMAAABiM0N1AAAABGdBTUEAALGPC/xhBQAAAAFzUkdCAK7OHOkAAABjUExURUdwTAAAAAAAAC3T9wAAAAAAAAAAAAAAAAAAAAAAAM3NzXZ2dgB62f7//6mpqsHCwtn1/JaWliS95hMxOEzZ+HTg+IGBgaXs/AB10SKryQxXZ0xMTKnP2RZ8khqOp1V3fwd3wLYO8tAAAAAKdFJOUwCI//8IH3TUS7HVhcskAAACtUlEQVRYw+2Y6ZKqMBCFWQXMNRhZRgR8/8cckkCWpoF2qftrTtXUqCSHPl82NAj+RFRyyqK3lJ0S1yd900ZZpU49H/hMTramU/SRTsZIFlTd4ji+Xi6XOpb6tyl1uZ4aXqf/t0qWZIykrfSJm/n61GLLR7VTd2xUO9l3bWQb6JLu4G8pyLmhZySjPbyS8XD32cdB8PCiKdiduvAzNflxwoF6bqBR58PWtOHNTG+M9EW3rvzhD3JpPJr4bknG7e4VpEGOsl/uTu0C5X0HQkkX3lpLI4R3B2deh5COUn/VAt6NbWj1ANkhabvcKsuyNqVb6ejm6or0Du/R9RkPSaO87U1nVYAgQnrFu8F4d2BMMdIU3ijpEN9uAe/Y442FXpN2eD/Bahohaf3xc4P0Dm9tRCW9w/tp66SQ1gqx4akWcmAww73jLQMTpm6GoZw0DE1NJI3yHs6urjTSDu95izuvNO/C+6Qh7+GMaKCQ9nmjPsrpkLTHe8NnEoG0Q4kv3UouWsZawUvzSeSdQPvjxpZOghmJxaoljNlyMs1dOPO0lFlRSsqdYMDHOHFKSZJQ7/gYWO67/ngeJfJmQjf3fLRTW9qSkuNkuqPi7I67Iq5fHmcLTbKSYUasNNnCQ0QtQtoY6aziEFJmxkzgRsJA2p8AMryuvl2Nu3rV2tl9aOQQ0dJjxZlDjWRUAiPhRX3ZqPVilctbarQVbB3L+JBhw+EXcCpwswEU/2dCfm2JOIu2xIzIixZuI8CIvo18b2P72lZL2PwZbfPXx5HYPo4E5cA2h3bEt85HBej4wDbhbE2+VD2UYPa7MsN8WIR9bdh/kIiqVTyun9/DgKz5+3vv5RN99Fo9lpP0arl89ONtv3ySBy8pLfAfC4o0eFU58jtHlgfvKAdVFe/ZqF0lDwtVWFaEeRL86TP9Au8XW/ZYgS+oAAAAAElFTkSuQmCC width='30' height='30'>" & myRecordSet.Fields(4).value & " grossed " & myRecordSet.Fields(2).value & " from " & myRecordSet.Fields(0).value & " (" & myRecordSet.Fields(3).value & ")"
+
+myRecordSet.Move 1
+
+		document.getElementById( "Row3" ).innerHTML = "<img src=data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEgAAABICAMAAABiM0N1AAAABGdBTUEAALGPC/xhBQAAAAFzUkdCAK7OHOkAAABpUExURUdwTAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA7HBPeKScxPBwZ9Bv///95nI++EQgu2AzHNJeZ1MuL44QifA1MqEo7lilzZVAAvAMx0OrzvuQJVAJhSKb5pNdGYQfTav6OhL3GvIOO6FiMAAAAKdFJOUwB0iP+xCB/TS/OdbSw3AAACqElEQVRYw+2Y25aCIBSGTfBcaZpOOpo17/+QI6DAFhAq11zNf9NaiT97f5uTeN6/HBUcogS9oSQ6BLJPGKG3FYVSPB/4TE4ipgP6SAduRAJqL2maXs/nc5kSnYyij8up4XX6vbQkJG5EOBOf9DY9/6YtLyYf2i79nhreaDtCXDUSDdJa71Onqw6BEUmtByEbQ2L9CQQ9SI3CZn19TU2+zCEpjSBsRjtddWYlPamF5fdiYnxKrbzXIE/kvVge2hhpeBsCgqQRBnMtTDS86/XIq3lPgnQSwlmr5d1Dn54HpCctphvjXU68ryUPXegCnyqkFd4ipJPso30Yq0uSxFsMgVb4tOsRq5JWeIu61DrSNyNphTdsLgW06sLXL7eRKQFT0ippO+/ekfQGb2bkStrG++RMmsnX8W5fIm3gXf48x2LS+PwpHUnreD/GTNL4cCMt8WaL1iNT9HAhveb9zDR68kEa2k4BC+8x02p0IA14G3yIEyGdBPaDCT0HdMt7RZUfJ+VVsfzTuRBa6jYsNtSFKV+sBoeazQE18yvVEaia/27AprgVUKf14U6dS0hYBER98gVNLjk1dkoBGUZ31hz4zE6M091eN5qZ9KJceMnYnpvPMyuOOqM5pMY6JDGvPSTNjSqeG7YWvxOZqUY5r9v2ACCsC5EI4C0sswKc03RCilGeaYwo7b8xIqlVe6S2G2xR/k2jwVr+3QbkblNEmrTFR5N2t2Vkv4Vtt6V2v8Wfbdp3vh3lbDviNpS0y3bENm2xsa1FASWhgxFLTsQEReNxSUx8Kw86nwHpPhu2DxKoUdLrGuR2gFh/vzcgv3uDXouHclouOJqhq4qi6oZmucSIvZcUYv1lAQ69VxVr7jmi2HtHMQY3OAl+z4auKrGPyX1QEmE/Drx/faZfyfpxnqnxQUkAAAAASUVORK5CYII width='30' height='30'>" & myRecordSet.Fields(4).value & " grossed " & myRecordSet.Fields(2).value & " from " & myRecordSet.Fields(0).value & " (" & myRecordSet.Fields(3).value & ")"
+
+myRecordSet.Move 1
+
+document.getElementById( "Row4" ).innerHTML = myRecordSet.Fields(4).value & " grossed " & myRecordSet.Fields(2).value & " from " & myRecordSet.Fields(0).value & " (" & myRecordSet.Fields(3).value & ")"
+
+myRecordSet.Move 1
+
+document.getElementById( "Row5" ).innerHTML = myRecordSet.Fields(4).value & " grossed " & myRecordSet.Fields(2).value & " from " & myRecordSet.Fields(0).value & " (" & myRecordSet.Fields(3).value & ")"
+
+myRecordSet.Move 1
+
+document.getElementById( "Row6" ).innerHTML = myRecordSet.Fields(4).value & " grossed " & myRecordSet.Fields(2).value & " from " & myRecordSet.Fields(0).value & " (" & myRecordSet.Fields(3).value & ")"
+
+myRecordSet.Move 1
+
+document.getElementById( "Row7" ).innerHTML = myRecordSet.Fields(4).value & " grossed " & myRecordSet.Fields(2).value & " from " & myRecordSet.Fields(0).value & " (" & myRecordSet.Fields(3).value & ")"
+
+myRecordSet.Move 1
+
+document.getElementById( "Row8" ).innerHTML = myRecordSet.Fields(4).value & " grossed " & myRecordSet.Fields(2).value & " from " & myRecordSet.Fields(0).value & " (" & myRecordSet.Fields(3).value & ")"
+
+myRecordSet.Move 1
+
+document.getElementById( "Row9" ).innerHTML = myRecordSet.Fields(4).value & " grossed " & myRecordSet.Fields(2).value & " from " & myRecordSet.Fields(0).value & " (" & myRecordSet.Fields(3).value & ")"
+
+myRecordSet.Move 1
+
+document.getElementById( "Row10" ).innerHTML = myRecordSet.Fields(4).value & " grossed " & myRecordSet.Fields(2).value & " from " & myRecordSet.Fields(0).value & " (" & myRecordSet.Fields(3).value & ")"
 
 		//'myRecordSet.Close
 
@@ -47,21 +79,23 @@
 	End Sub
 </script>
 
-<body style="font:11pt arial">
-
+<body style="font:11pt arial" onload="QueryDB">
 	<img src=data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEgAAABICAMAAABiM0N1AAAATlBMVEVHcEwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD/uQCOVi7/1nhYPgXUmgAXEQDlpgCccQA5KQD5tQBxUgCufgD/wiX/zE+IUiwqOMynAAAACnRSTlMAtA7NbtqXVPEkVVUHDgAAAlhJREFUWMPtl9l2gyAQhqNsKgmLUdu8/4u2LBqFAcG7nua/yknmfBlmmIXb7aM69bjphiJ1De7TmGaoUpNA4W6oVIdBznBBOMV5jppzPT55RqsNTOrNudTIKzTa04VxsnGWvErSRjxwyHw38kpZn/ooQjYwUiglYM++Ho8vfrR5RlFC3iGpzJ8okPT4FT/aGJfQAWRC/ZsLLlxWRQ60s9Em3AeQ+cUYKWekcqC9jfkAgtaLlgPtbT6gC6A1/aocpMD0E19pohwkfLWRqGbNzV7KQYu/2Q1Ya5MqBakJrDVb/frt0jlo8SEKqt9W7WzM5jLQZouCxsa2xjaXgOatsbGw15q8Pc25+aLOQMqci0/PKGebS8KSpiXfRhZnJUCHbjf6JsFaQU6OQ4G51iI7j2QZSNpphFpoQrbE5UOfg7TLLWnhme18MlNSwr3fgibpZ2PCH0uimeo3nO999dM2s9cwd7xBg/7YcaSdBWEnKxJDawGEFO+QLSLECrYtGs2jPcd2Glq0trHobHuOTlxDSCR0yRzt241r6xAp3CRxZqMYE+sVLJQkWQ4qX27tNimiO6AFuFudxXtQYtmx9OInA6tZuFkX3vFtk2WVqzuCQaivfgVgEoMIvvSgYCGIXcK0uAlBDW4vuNNBMeqqnaKprNGLnAhUR3IXcpaHmTLJufZCtl1i2bYrdlcU8Z76Zgs/TKT/kdC+tDRmuI3MZaXC3k86mXkRJR99x/bhlJjd0+4h2ueTLl73U71E/iLYZn0vUr51m795lYFe0YYdgu6F+oOgGv1H0EegfgB79n/uoANxTwAAAABJRU5ErkJggg>
-    <h1>Grossing Scoreboard</h1>
+    <h1>Grossing Leaderboard</h1>
     <p>Find and gross the oldest specimen!</p>
+<p></p>
+<p id="Row1">1</p>
+<p id="Row2">2</p>
+<p id="Row3">3</p>
+<p id="Row4">4</p>
+<p id="Row5">5</p>
+<p id="Row6">6</p>
+<p id="Row7">7</p>
+<p id="Row8">8</p>
+<p id="Row9">9</p>
+<p id="Row10">10</p>
 
-	<input type="button" value="Reload" onclick="QueryDB" />
 
- 
-
-<p>&nbsp;</p>
-
-<p id="Row1">Oldest</p>
-<p id="Row2">Second Oldest</p>
-<p id="Row3">Third Oldest</p>
 
 
 </body>
