@@ -22,16 +22,6 @@
         window.resizeTo 800,700
     End Sub
 
-    Sub QueryDB2()
-        document.getElementById("InitialsRow1").innerHTML = "JJP"
-        document.getElementById("SpecimenCodeRow1").innerHTML = "HOWMANYCHARATCERS"
-        document.getElementById("LabNumberRow1").innerHTML = "SP-20-9999"
-
-        RowDate = "2020-11-11 10:29:00"
-        RowDate = Replace(FormatDateTime(RowDate,1), ", " & Year(RowDate),"")
-        document.getElementById("DateRow1").innerHTML = RowDate
-    End Sub
-
 	Sub QueryDB()
 		
 		Set objConnection = CreateObject("ADODB.Connection")
@@ -57,7 +47,7 @@
     For Index = 1 To 10
 
         RowDate = myRecordSet.Fields(0).value
-        RowDate = "2020-05-11 10:29:00"
+        'RowDate = "2020-05-11 10:29:00"
         RowDate = Replace(FormatDateTime(RowDate,1), ", " & Year(RowDate),"")
 
         document.getElementById("InitialsRow" & Index ).innerHTML = myRecordSet.Fields(4).value
@@ -65,7 +55,7 @@
         document.getElementById("SpecimenCodeRow" & Index).innerHTML = myRecordSet.Fields(2).value
         document.getElementById("LabNumberRow" & Index).innerHTML = myRecordSet.Fields(3).value
 
-        myRecordSet.Move 1
+        If Not Index = 10 Then myRecordSet.Move 1
     Next
 
 		//'myRecordSet.Close
@@ -76,13 +66,13 @@
 	End Sub
 </script>
 
-<body style="font-family:'Segoe UI', Roboto,'Helvetica Neue',Arial,'Noto Sans',sans-serif" style="text-align:center" onload="QueryDB2">
+<body style="font-family:'Segoe UI', Roboto,'Helvetica Neue',Arial,'Noto Sans',sans-serif" style="text-align:center" onload="QueryDB">
 <img src=data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEgAAABICAMAAABiM0N1AAAATlBMVEVHcEwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD/uQCOVi7/1nhYPgXUmgAXEQDlpgCccQA5KQD5tQBxUgCufgD/wiX/zE+IUiwqOMynAAAACnRSTlMAtA7NbtqXVPEkVVUHDgAAAlhJREFUWMPtl9l2gyAQhqNsKgmLUdu8/4u2LBqFAcG7nua/yknmfBlmmIXb7aM69bjphiJ1De7TmGaoUpNA4W6oVIdBznBBOMV5jppzPT55RqsNTOrNudTIKzTa04VxsnGWvErSRjxwyHw38kpZn/ooQjYwUiglYM++Ho8vfrR5RlFC3iGpzJ8okPT4FT/aGJfQAWRC/ZsLLlxWRQ60s9Em3AeQ+cUYKWekcqC9jfkAgtaLlgPtbT6gC6A1/aocpMD0E19pohwkfLWRqGbNzV7KQYu/2Q1Ya5MqBakJrDVb/frt0jlo8SEKqt9W7WzM5jLQZouCxsa2xjaXgOatsbGw15q8Pc25+aLOQMqci0/PKGebS8KSpiXfRhZnJUCHbjf6JsFaQU6OQ4G51iI7j2QZSNpphFpoQrbE5UOfg7TLLWnhme18MlNSwr3fgibpZ2PCH0uimeo3nO999dM2s9cwd7xBg/7YcaSdBWEnKxJDawGEFO+QLSLECrYtGs2jPcd2Glq0trHobHuOTlxDSCR0yRzt241r6xAp3CRxZqMYE+sVLJQkWQ4qX27tNimiO6AFuFudxXtQYtmx9OInA6tZuFkX3vFtk2WVqzuCQaivfgVgEoMIvvSgYCGIXcK0uAlBDW4vuNNBMeqqnaKprNGLnAhUR3IXcpaHmTLJufZCtl1i2bYrdlcU8Z76Zgs/TKT/kdC+tDRmuI3MZaXC3k86mXkRJR99x/bhlJjd0+4h2ueTLl73U71E/iLYZn0vUr51m795lYFe0YYdgu6F+oOgGv1H0EegfgB79n/uoANxTwAAAABJRU5ErkJggg>
 <h1>Gross Room Leaderboard</h1>
 <p>Find and gross the oldest specimen!</p>
 <p></p>
 
-<table style="width:80%" style="text-align:left">
+<table style="width:80%">
     <tr>
         <th></th>
         <th></th>
