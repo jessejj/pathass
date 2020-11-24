@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<head>
+
+    <title>New Order</title>
+ 
+	<HTA:APPLICATION
+	APPLICATIONNAME = "Jesse's first HTA HTML Application"
+	ID = "NAME"
+        SINGLEINSTANCE = "Yes"
+        SCROLL="no"
+        BORDER="thin"
+        INNERBORDER="no"
+        MAXIMIZEBUTTON="no"
+        
+    />
+
+</head>
+
+<script language="VBScript">
+Sub Test2
+
+Dim shell
+    Set shell = createobject("wscript.shell")
+        shell.AppActivate("PowerPath Client")
+    
+
+
+Do
+If shell.AppActivate("AMP Grossing Station Warning") Then
+
+shell.Sendkeys "y", True
+shell.Sendkeys "~", True
+
+Dismiss = True
+
+Else
+
+
+If Dismiss = True Then
+
+Dismiss = False
+shell.AppActivate "PowerPath Client"
+
+shell.Sendkeys "^o", True
+
+End If
+
+
+End If
+
+Loop
+
+
+Set shell = Nothing
+
+End Sub
+
+
+
+</script>
+
+<body style="font-family:'Segoe UI', Roboto,'Helvetica Neue',Arial,'Noto Sans',sans-serif" style="text-align:center">
+<p>Hello world! </p>
+
+<button type="button" onclick=Test2()
+id="TestButton" name="TestButton">Click Me!</button>
+
+</body>
+ 
+</html>
