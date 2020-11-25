@@ -16,7 +16,7 @@ DefaultFolder = "\\CLPATHIF01\DIS_SHARE"
 shell.RegWrite "HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\IMPAC\PseudoDriver\CIV-GRO-CAS1\v1.0\Directory Path", DefaultFolder, "REG_SZ"
 
 If shell.RegRead( "HKLM\SOFTWARE\Wow6432Node\IMPAC\PseudoDriver\CIV-GRO-CAS1\v1.0\Directory Path" ) = DefaultFolder Then
-    shell.RegWrite "HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\IMPAC\PseudoDriver\CIV-GRO-CAS1\v1.0\Directory Path", InputFolder, "REG_SZ" 
+    shell.RegWrite "HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\IMPAC\PseudoDriver\CIV-GRO-CAS1\v1.0\Directory Path", CassetteTriageFolder, "REG_SZ" 
 Else
     msgbox "Unknown folder set"
 End If
