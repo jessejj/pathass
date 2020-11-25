@@ -10,8 +10,8 @@ If Not FSO.FolderExists(CassetteTriageFolder) Then
     FSO.CreateFolder(CassetteTriageFolder)
 End If
 
-OutputFolder = "\\CLPATHIF01\DIS_SHARE"
-DefaultFolder = "\\CLPATHIF01\DIS_SHARE"
+OutputFolder = "\\CLPATHIF01\DIS_SHARE\" 'backslash needed
+DefaultFolder = "\\CLPATHIF01\DIS_SHARE\"
 
 shell.RegWrite "HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\IMPAC\PseudoDriver\CIV-GRO-CAS1\v1.0\Directory Path", DefaultFolder, "REG_SZ"
 
