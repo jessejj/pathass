@@ -13,9 +13,7 @@ End If
 OutputFolder = "\\CLPATHIF01\DIS_SHARE"
 DefaultFolder = "\\CLPATHIF01\DIS_SHARE"
 
-
 shell.RegWrite "HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\IMPAC\PseudoDriver\CIV-GRO-CAS1\v1.0\Directory Path", DefaultFolder, "REG_SZ"
-
 
 If shell.RegRead( "HKLM\SOFTWARE\Wow6432Node\IMPAC\PseudoDriver\CIV-GRO-CAS1\v1.0\Directory Path" ) = DefaultFolder Then
     shell.RegWrite "HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\IMPAC\PseudoDriver\CIV-GRO-CAS1\v1.0\Directory Path", InputFolder, "REG_SZ" 
@@ -33,20 +31,19 @@ Do
         shell.Sendkeys "y", True
         shell.Sendkeys "~", True
 
-        'print blocks HERE
-Wscript.Sleep 1000
+        Wscript.Sleep 1000
 
-if shell.AppActivate("Confirm") then
-shell.Sendkeys "n", True
-shell.Sendkeys "~", True
-Wscript.Sleep 1000
-end if
+        if shell.AppActivate("Confirm") then
+            shell.Sendkeys "n", True
+            shell.Sendkeys "~", True
+            Wscript.Sleep 1000
+        end if
 
-shell.AppActivate("PowerPath Advanced")
+        shell.AppActivate("PowerPath Advanced")
 
-shell.Sendkeys "%p", True
+        shell.Sendkeys "%p", True
 
-Wscript.Sleep 1000
+        Wscript.Sleep 1000
 
     End If
 
@@ -71,14 +68,14 @@ Wscript.Sleep 1000
                         WriteFile.close
                         
                         file.move OutputFolder
+                Say "Sent 1 cassette to labelase for bin 2"
                        
                 
-                    For Index = 1 to 13 'seconds (change this value to control how long it takes for the queue to be processed)
+                    For Index = 1 to 10 'seconds (change this value to control how long it takes for the queue to be processed)
+                        Wscript.Sleep 1000
+                    
                         If shell.AppActivate("AMP Grossing Station Warning") Then
-                            'if warning appears, dismiss it then start the script
-
-                            Wscript.Sleep 1000   
-
+                            Wscript.Sleep 1000 
                             shell.Sendkeys "y", True
                             shell.Sendkeys "~", True
 
@@ -105,6 +102,11 @@ Loop
 
 
 shell.RegWrite "HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\IMPAC\PseudoDriver\CIV-GRO-CAS1\v1.0\Directory Path", DefaultFolder, "REG_SZ"
-
+    
 Set FSO = Nothing
 Set shell = Nothing
+ 
+Function Say(message)
+    WScript.StdOut.Write message
+    WScript.StdOut.WriteLine
+End Function
