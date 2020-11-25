@@ -21,6 +21,8 @@ Else
     msgbox "Unknown folder set"
 End If
 
+say "Hello! Now ready to scan the next case..."
+
 Do
 
     If shell.AppActivate("AMP Grossing Station Warning") Then
