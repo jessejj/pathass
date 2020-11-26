@@ -11,7 +11,7 @@ If Not FSO.FolderExists(CassetteTriageFolder) Then
 End If
 
 OutputFolder = "\\CLPATHIF01\DIS_SHARE\" 'backslash needed
-DefaultFolder = "\\CLPATHIF01\DIS_SHARE\"
+DefaultFolder = "\\CLPATHIF01\DIS_SHARE"
 
 shell.RegWrite "HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\IMPAC\PseudoDriver\CIV-GRO-CAS1\v1.0\Directory Path", DefaultFolder, "REG_SZ"
 
@@ -42,9 +42,7 @@ Do
         end if
 
         shell.AppActivate("PowerPath Advanced")
-
         shell.Sendkeys "%p", True
-
         Wscript.Sleep 1000
 
     End If
@@ -56,6 +54,7 @@ Do
         Set Files = Folder.Files
 
             If Files.Count > 0 Then
+		CassetteCount = 0
 
                 For Each file in Files
                     filelist = filelist & file.name & vbcrlf
@@ -70,7 +69,9 @@ Do
                         WriteFile.close
                         
                         file.move OutputFolder
-                Say "Sent 1 cassette to labelase for bin 2"
+			CassetteCount = CassetteCount + 1
+                Say CassetteCount & " out of " & Files.Count+1 & " sent to bin 2. Please don't stop script."
+If CassetteCount = Files.Count+1 Then Say "Now safe to stop script."
                        
                 
                     For Index = 1 to 10 'seconds (change this value to control how long it takes for the queue to be processed)
@@ -80,6 +81,15 @@ Do
                             Wscript.Sleep 1000 
                             shell.Sendkeys "y", True
                             shell.Sendkeys "~", True
+        if shell.AppActivate("Confirm") then
+            shell.Sendkeys "n", True
+            shell.Sendkeys "~", True
+            Wscript.Sleep 1000
+        end if
+
+        shell.AppActivate("PowerPath Advanced")
+        shell.Sendkeys "%p", True
+        Wscript.Sleep 1000
 
                         End If
 
