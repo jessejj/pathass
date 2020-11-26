@@ -11,6 +11,7 @@
         BORDER="thin"
         INNERBORDER="no"
         MAXIMIZEBUTTON="no"
+	SysMenu="no"
         
     />
 
@@ -18,12 +19,12 @@
 
 <script language="VBScript">
     Sub Window_onLoad
-        window.resizeTo 400,300
+        window.resizeTo 300,200
     End Sub
     
     Sub TriageCassettes
 	    Set objShell = CreateObject("wscript.Shell")
-		objShell.run "cscript.exe TriageCassettes.vbs"
+		objShell.run "cscript.exe TriageCassettesScript.vbs"
 	    Set objShell = Nothing
     End Sub
 
@@ -32,6 +33,7 @@
 		objShell.run "taskkill.exe /F /IM cscript.exe /T"
 		objShell.regwrite "HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\IMPAC\PseudoDriver\CIV-GRO-CAS1\v1.0\Directory Path", "\\CLPATHIF01\DIS_SHARE", "REG_SZ"
 	    Set objShell = Nothing
+	window.close()
 	End Sub
 
 </script>
