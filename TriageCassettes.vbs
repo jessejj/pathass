@@ -55,6 +55,7 @@ Do
 
             If Files.Count > 0 Then
 		CassetteCount = 0
+		TotalCassettes = Files.Count
 
                 For Each file in Files
                     filelist = filelist & file.name & vbcrlf
@@ -64,32 +65,37 @@ Do
                         ReadFile.close
                     
                     Set WriteFile = FSO.OpenTextFile(file.path, 2)
-                        text = Replace(text, "<STORE>1<>", "<STORE>2<>")
-                        WriteFile.Write text
-                        WriteFile.close
+                       text = Replace(text, "<STORE>1<>", "<STORE>3<>")
+                       WriteFile.Write text
+                       WriteFile.close
                         
                         file.move OutputFolder
 			CassetteCount = CassetteCount + 1
-                Say CassetteCount & " out of " & Files.Count+1 & " sent to bin 2. Please don't stop script."
-If CassetteCount = Files.Count+1 Then Say "Now safe to stop script."
+                Say CassetteCount & " sent to printer. " & Files.Count & " remain. Please don't stop script."
+If CassetteCount = TotalCassettes Then Say "Now safe to stop script."
                        
                 
-                    For Index = 1 to 10 'seconds (change this value to control how long it takes for the queue to be processed)
+                    For Index = 1 to 11 'seconds (change this value to control how long it takes for the queue to be processed)
                         Wscript.Sleep 1000
                     
                         If shell.AppActivate("AMP Grossing Station Warning") Then
                             Wscript.Sleep 1000 
                             shell.Sendkeys "y", True
+Wscript.Sleep 500
                             shell.Sendkeys "~", True
+Wscript.Sleep 1000
         if shell.AppActivate("Confirm") then
-            shell.Sendkeys "n", True
+Wscript.Sleep 500            
+shell.Sendkeys "n", True
             shell.Sendkeys "~", True
-            Wscript.Sleep 1000
+            Wscript.Sleep 500
         end if
 
         shell.AppActivate("PowerPath Advanced")
-        shell.Sendkeys "%p", True
-        Wscript.Sleep 1000
+Wscript.Sleep 500
+shell.Sendkeys "%p", True
+Wscript.Sleep 500
+        
 
                         End If
 
