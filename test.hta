@@ -26,6 +26,9 @@
 	    Set objShell = CreateObject("wscript.Shell")
 		objShell.run "cscript.exe TriageCassettesScript.vbs"
 	    Set objShell = Nothing
+
+	document.GetElementByID("TestButton").disabled = true
+
     End Sub
 
 	Sub StopScript
@@ -39,11 +42,11 @@
 </script>
 
 <body style="font-family:'Segoe UI', Roboto,'Helvetica Neue',Arial,'Noto Sans',sans-serif" style="text-align:center">
-<p>Hello world! </p>
+<p>This program prints cassettes automatically after scanning the specimen</p>
 
-<button type="button" onclick=TriageCassettes id="TestButton" name="TestButton">Triage Cassettes</button>
+<button type="button" onclick=TriageCassettes id="TestButton" name="TestButton">Run</button>
 &nbsp;
-<button type="button" onclick=StopScript id="TestButton" name="TestButton">Stop</button>
+<button type="button" onclick=StopScript id="TestButton2" name="TestButton">Stop</button>
 
 </body>
  
