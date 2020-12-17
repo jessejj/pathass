@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<head>
+    <title>Pathology Assistant</title>
+ 
+	<HTA:APPLICATION
+		APPLICATIONNAME = "Jesse's first HTA HTML Application"
+		ID = "PathologyAssistantApp"
+        SINGLEINSTANCE = "Yes"
+        SCROLL="no"
+        BORDER="thin"
+        INNERBORDER="no"
+        MAXIMIZEBUTTON="no"
+        
+    />
+
+</head>
+
+<script language="VBScript">
+    Sub Window_onLoad
+        window.resizeTo 800,700
+    End Sub
+
+    Sub Sub1
+        document.getElementById("Back").disabled = False
+        document.getElementById("header").innerHTML = "AutoCorrect Options"
+        document.getElementById("1").innerHTML = "<i>AutoFormat As You Type tab</i>"
+        document.getElementById("2").innerHTML = "Open e-mail attachments and other uneditable files in reading view"
+        document.getElementById("3").innerHTML = Chr(34) & "Straight quotes" & Chr(34) & " with " & Chr(34) & "smart quotes" & Chr(34)
+        document.getElementById("4").innerHTML = "Fractions (1/2) with fraction character (&frac12;)"
+        document.getElementById("5").innerHTML = "Symbol character (--) with symbols (&mdash;) OR Hyphens (--) with dash (-)"
+        document.getElementById("6").innerHTML = "Automatic bulleted lists"
+        document.getElementById("7").innerHTML = "Automatic numbered lists"
+        document.getElementById("8").innerHTML = "Define styles based on your formatting"
+    End Sub
+    
+    Sub Sub2
+        document.getElementById("Back").disabled = False
+        document.getElementById("header").innerHTML = "AutoCorrect Options"
+        document.getElementById("1").innerHTML = "<i>AutoFormat tab</i>"
+        document.getElementById("2").innerHTML = "Automatic bulleted lists"
+        document.getElementById("3").innerHTML = Chr(34) & "Straight quotes" & Chr(34) & " with " & Chr(34) & "smart quotes" & Chr(34)
+        document.getElementById("4").innerHTML = "Fractions (1/2) with fraction character (&frac12;)"
+        document.getElementById("5").innerHTML = "Symbol character (--) with symbols (&mdash;) OR Hyphens (--) with dash (-)"
+        document.getElementById("6").innerHTML = "Styles"
+        document.getElementById("7").innerHTML = "Save AutoRecover information"
+        document.getElementById("8").innerHTML = "Automatic bulleted lists"
+    End Sub
+
+</script>
+
+<body style="font-family:'Segoe UI', Roboto,'Helvetica Neue',Arial,'Noto Sans',sans-serif; margin: 30px" >
+
+<div id="home">
+<h1 style="text-align:center" id="header">Pathology Assistant App</h1>
+<p id="1"><button type="button" onclick="Sub1">Check</button> AutoCorrect Options AutoFormat As You Type</p>
+<p id="2"><button type="button" onclick="Sub2">Check</button> AutoCorrect Options AutoFormat</p>
+<p id="3"> </p>
+<p id="4"> </p>
+<p id="5"> </p>
+<p id="6"> </p>
+<p id="7"> </p>
+<p id="8"> </p>
+<p id="9"> </p>
+<p id="10"> </p>
+<p id="11"> </p>
+<p id="12"> </p>
+<p id="13"> </p>
+<p id="14"> </p>
+<p id="15"></p>
+</div>
+<input type=button value="Back" id="Back" onClick="window.location.reload()" disabled>
+
+</body>
+ 
+</html>
