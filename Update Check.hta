@@ -5,7 +5,7 @@
 	<HTA:APPLICATION
 		APPLICATIONNAME = "Jesse's first HTA HTML Application"
 		ID = "PathologyAssistantApp"
-        VERSION="1.0-gamma"
+        VERSION="4ff074883ab29c005f94aa847bdc49c3a1129693"
         SINGLEINSTANCE = "Yes"
         SCROLL="no"
         BORDER="thin"
@@ -21,7 +21,7 @@
         window.resizeTo 800,700
     End Sub
 
-    Sub Sub1
+    Sub CheckSHA
 
         Dim o
         Set o = CreateObject("MSXML2.XMLHTTP")
@@ -30,24 +30,19 @@
 
         jsontext = "{" & Chr(34) & "name" & Chr(34) & ":" & chr(34) '{"name":"
 
-        If o.Status = 200 Then 
+        If o.Status = 200 Then
 
-        Releases = Split(o.responseText, jsontext)
+        json = o.responseText
 
-        Latest = Split(Releases(Ubound(Releases)), Chr(34) & "," & Chr(34))
-        jsonURL = Split(Releases(Ubound(Releases)), Chr(34) & "zipball_url" & Chr(34) & ":" & chr(34))
-        LatestURL = Split(jsonURL(1), Chr(34) & "," & Chr(34))
-
-        If Not PathologyAssistantApp.Version = Latest(0) Then UpdateText = "NOT UP TO DATE" Else UpdateText = "You have the latest update"
+        If InStr(json, PathologyAssistantApp.Version) = 0 then UpdateText = "Unsupported" Else UpdateText = "Supported"
 
         End If
 
         document.getElementById("Back").disabled = False
         document.getElementById("header").innerHTML = "Checking for update"
         document.getElementById("1").innerHTML = "Status: " & o.Status
-        document.getElementById("3").innerHTML = "Latest Release: " & Latest(0)
         document.getElementById("4").innerHTML = UpdateText
-        document.getElementById("5").innerHTML = "<a href=" & LatestURL(0) & "> Download </a>"
+        document.getElementById("5").innerHTML = "<a href='https://github.com/jessepelley/pathologyAssistant/releases'> Download </a>"
         Set o = Nothing
 
     End Sub
@@ -58,7 +53,7 @@
 
 <div id="home">
 <h1 style="text-align:center" id="header">This App includes code to check for updates</h1>
-<p id="1"><button type="button" onclick="Sub1">Check</button> Check for Updates</p>
+<p id="1"><button type="button" onclick="CheckSHA">Check</button> Check for Updates</p>
 <p id="2"></p>
 <p id="3"> </p>
 <p id="4"> </p>
