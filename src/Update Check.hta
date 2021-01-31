@@ -3,9 +3,8 @@
     <title>Pathology Assistant</title>
  
 	<HTA:APPLICATION
-		APPLICATIONNAME = "Jesse's first HTA HTML Application"
-		ID = "PathologyAssistantApp"
-        VERSION="708e63e10e1c7bb86e8a49872d65dcbe3cd4502d"
+		ID = "PA"
+        VERSION="64dd270bedf664994d14f073f2898be95342b2f7"
         SINGLEINSTANCE = "Yes"
         SCROLL="no"
         BORDER="thin"
@@ -28,22 +27,27 @@
         o.open "GET", "https://api.github.com/repos/jessepelley/pathologyAssistant/tags", False
         o.send
 
-        jsontext = "{" & Chr(34) & "name" & Chr(34) & ":" & chr(34) '{"name":"
-
         If o.Status = 200 Then
 
         json = o.responseText
 
-        If InStr(json, PathologyAssistantApp.Version) = 0 then UpdateText = "Unsupported" Else UpdateText = "Supported"
-
         End If
+
+        If InStr(json, PA.Version) = 0 then UpdateText = "Unsupported" Else UpdateText = "Supported"
+
 
         document.getElementById("Back").disabled = False
         document.getElementById("header").innerHTML = "Checking for update"
-        document.getElementById("1").innerHTML = "Status: " & o.Status
-        document.getElementById("4").innerHTML = UpdateText
-        document.getElementById("5").innerHTML = "<a href='https://github.com/jessepelley/pathologyAssistant/releases'> Download </a>"
+        document.getElementById("1").innerHTML = UpdateText
+        document.getElementById("2").innerHTML = "<input type='button' onclick='openLink()' value='Download'>"
         Set o = Nothing
+
+    End Sub
+
+    Sub openLink
+
+        Set shell = CreateObject("WScript.Shell")
+        shell.run "https://github.com/jessepelley/pathologyAssistant/releases"
 
     End Sub
 
