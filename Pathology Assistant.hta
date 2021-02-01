@@ -1,10 +1,13 @@
 <!DOCTYPE html>
+
+<div id="container">
+<div id="header">
 <head>
     <title>Pathology Assistant</title>
  
 	<HTA:APPLICATION
-		APPLICATIONNAME = "Jesse's first HTA HTML Application"
-		ID = "PathologyAssistantApp"
+		ID = "PA"
+        VERSION="64dd270bedf664994d14f073f2898be95342b2f7"
         SINGLEINSTANCE = "Yes"
         SCROLL="no"
         BORDER="thin"
@@ -12,49 +15,175 @@
         MAXIMIZEBUTTON="no"
         
     />
+<style>
+html,
+body {
+   margin:0;
+   padding:0;
+   height:100%;
+}
+#container {
+   min-height:100%;
+   position:relative;
+}
+#header {
+   padding:10px;
+}
+#body {
+   padding:10px;
+   padding-bottom:60px;   /* Height of the footer */
+}
+#footer {
+   position:absolute;
+   bottom:0;
+   width:100%;
+   height:60px;   /* Height of the footer */
+}
 
+#container {
+   height:100%;
+}
+</style>
 </head>
+</div>
+
+
 
 <script language="VBScript">
     Sub Window_onLoad
-        window.resizeTo 800,700
+        window.resizeTo 700,600
+
+        document.getElementById("footer").innerHTML = "Checking for updates"
+        
+        Dim o
+        Set o = CreateObject("MSXML2.XMLHTTP")
+        o.open "GET", "https://api.github.com/repos/jessepelley/pathologyAssistant/tags", False
+        o.send
+
+        If o.Status = 200 Then
+            json = o.responseText
+        End If
+
+        If InStr(json, PA.Version) = 0 then UpdateText = "Unsupported Version" & "<input type='button' onclick='openLink()' value='Download'>" Else UpdateText = "Supported Version"
+
+        document.getElementById("footer").innerHTML = UpdateText 
+        Set o = Nothing
     End Sub
 
-    Sub Sub1
-        document.getElementById("Back").disabled = False
-        document.getElementById("header").innerHTML = "AutoCorrect Options"
-        document.getElementById("1").innerHTML = "<i>AutoFormat As You Type tab</i>"
-        document.getElementById("2").innerHTML = "Open e-mail attachments and other uneditable files in reading view"
-        document.getElementById("3").innerHTML = Chr(34) & "Straight quotes" & Chr(34) & " with " & Chr(34) & "smart quotes" & Chr(34)
-        document.getElementById("4").innerHTML = "Fractions (1/2) with fraction character (&frac12;)"
-        document.getElementById("5").innerHTML = "Symbol character (--) with symbols (&mdash;) OR Hyphens (--) with dash (-)"
-        document.getElementById("6").innerHTML = "Automatic bulleted lists"
-        document.getElementById("7").innerHTML = "Automatic numbered lists"
-        document.getElementById("8").innerHTML = "Define styles based on your formatting"
+    Sub ClearIDs
+
+    For Index = 1 to 10
+        document.getElementById(Index).innerHTML = ""
+    Next
+
     End Sub
-    
-    Sub Sub2
+
+    Sub Cassettes
+    ClearIDs
+
+        BinHTML = "Choose exit bin: <select name = 'ExitBin' id = 'ExitBin'> <option value = 'ExitBin1' selected>Bin 1</option><option value = 'ExitBin2'>Bin 2</option><option value = 'ExitBin3'>Bin 3</option></select>"
+        StartStopButtonsHTML = "<button type='button' onclick=TriageCassettes id='RunButton' name='RunButton'>Run</button> &nbsp; <button type='button' onclick=StopScript id='StopButton' name='StopButton'>Stop</button>"
+
         document.getElementById("Back").disabled = False
-        document.getElementById("header").innerHTML = "AutoCorrect Options"
-        document.getElementById("1").innerHTML = "<i>AutoFormat tab</i>"
-        document.getElementById("2").innerHTML = "Automatic bulleted lists"
-        document.getElementById("3").innerHTML = Chr(34) & "Straight quotes" & Chr(34) & " with " & Chr(34) & "smart quotes" & Chr(34)
-        document.getElementById("4").innerHTML = "Fractions (1/2) with fraction character (&frac12;)"
-        document.getElementById("5").innerHTML = "Symbol character (--) with symbols (&mdash;) OR Hyphens (--) with dash (-)"
-        document.getElementById("6").innerHTML = "Styles"
-        document.getElementById("7").innerHTML = "Save AutoRecover information"
-        document.getElementById("8").innerHTML = "Automatic bulleted lists"
+        document.getElementById("title").innerHTML = "Cassettes"
+        document.getElementById("1").innerHTML = BinHTML
+        document.getElementById("2").innerHTML = StartStopButtonsHTML
+
     End Sub
+
+    Sub TriageCassettes
+	    Set objShell = CreateObject("wscript.Shell")
+		objShell.run "cscript.exe src/TriageCassettesScript.vbs " & document.GetElementByID("ExitBin").value
+	    Set objShell = Nothing
+
+		document.GetElementByID("RunButton").disabled = true
+        document.getElementById("Back").disabled = true
+    End Sub
+
+	Sub StopScript
+        document.getElementById("Back").disabled = False
+        document.GetElementByID("RunButton").disabled = False
+	    Set objShell = CreateObject("wscript.Shell")
+		objShell.run "taskkill.exe /F /IM cscript.exe /T"
+		objShell.regwrite "HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\IMPAC\PseudoDriver\CIV-GRO-CAS1\v1.0\Directory Path", "\\CLPATHIF01\DIS_SHARE", "REG_SZ"
+	    Set objShell = Nothing
+	End Sub
+
+    Sub openLink
+        Set shell = CreateObject("WScript.Shell")
+        shell.run "https://github.com/jessepelley/pathologyAssistant/releases"
+    End Sub
+
+    Sub Report
+    ClearIDs
+        StartStopButtonsHTML = "<button type='button' onclick=ReportScript id='RunButton' name='RunButton'>Run</button> &nbsp; <button type='button' onclick=StopScript id='StopButton' name='StopButton'>Stop</button>"
+
+        document.getElementById("Back").disabled = False
+        document.getElementById("title").innerHTML = "Report"
+
+        document.getElementById("2").innerHTML = StartStopButtonsHTML
+    End Sub
+
+    Sub ReportScript
+	    Set objShell = CreateObject("wscript.Shell")
+		objShell.run "cscript.exe src/NextItemScript.vbs"
+	    Set objShell = Nothing
+
+		document.GetElementByID("RunButton").disabled = true
+        document.getElementById("Back").disabled = true
+    End Sub
+
+	Sub Leaderboard()
+        ClearIDs
+        document.getElementById("Back").disabled = False
+		
+		Set objConnection = CreateObject("ADODB.Connection")
+		Set myRecordSet = CreateObject("ADODB.Recordset")
+
+		DatabasePath = "\\ohpathdragon01\voicebrook\Admin\Commands\STATS\Grossing Statistics.accdb"
+
+		If objConnection.State = adStateClosed Then
+			objConnection.ConnectionString = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" & DatabasePath & ";"
+			objConnection.Open
+		End If
+
+		myRecordSet.ActiveConnection = objConnection
+
+		SQL = "SELECT TOP 10 SaveGrossRecords.[ProcedureDate], SaveGrossRecords.[SaveTime], SaveGrossRecords.[Code], SaveGrossRecords.[AccessionNo], SaveGrossRecords.[Initials] "
+		SQL = SQL & "FROM SaveGrossRecords "
+		SQL = SQL & "WHERE (((SaveGrossRecords.[ProcedureDate])>0) AND ((SaveGrossRecords.[SaveTime])>Date())) "
+		SQL = SQL & "ORDER BY SaveGrossRecords.[ProcedureDate] ASC"
+
+		myRecordSet.Open SQL
+
+        For Index = 1 To 10
+
+            RowDate = myRecordSet.Fields(0).value
+            'RowDate = "2020-05-11 10:29:00"
+            RowDate = Replace(FormatDateTime(RowDate,1), ", " & Year(RowDate),"")
+
+            document.getElementById(Index).innerHTML = myRecordSet.Fields(4).value & " " & myRecordSet.Fields(2).value & " " & RowDate & " " & myRecordSet.Fields(3).value
+
+            If Not Index = 10 Then myRecordSet.Move 1
+        Next
+
+		//'myRecordSet.Close
+
+		Set objConnection = Nothing
+		Set myRecordSet = Nothing
+
+	End Sub
 
 </script>
 
+<div id="body">
 <body style="font-family:'Segoe UI', Roboto,'Helvetica Neue',Arial,'Noto Sans',sans-serif; margin: 30px" >
 
 <div id="home">
-<h1 style="text-align:center" id="header">Pathology Assistant App</h1>
-<p id="1"><button type="button" onclick="Sub1">Check</button> AutoCorrect Options AutoFormat As You Type</p>
-<p id="2"><button type="button" onclick="Sub2">Check</button> AutoCorrect Options AutoFormat</p>
-<p id="3"> </p>
+<h1 style="text-align:center" id="title">Pathology Assistant App</h1>
+<p id="1"><button class="button" type="button" onclick="Cassettes">Cassettes</button> </p>
+<p id="2"><button class="button" type="button" onclick="Report">Report</button> </p>
+<p id="3"><button class="button" type="button" onclick="Leaderboard">Leaderboard</button> </p>
 <p id="4"> </p>
 <p id="5"> </p>
 <p id="6"> </p>
@@ -68,8 +197,13 @@
 <p id="14"> </p>
 <p id="15"></p>
 </div>
-<input type=button value="Back" id="Back" onClick="window.location.reload()" disabled>
-
+<input class="button" type=button value="Back" id="Back" onClick="window.location.reload()" disabled>
 </body>
- 
+</div>
+
+
+<div id="footer">
+</div>
+
+</div>
 </html>

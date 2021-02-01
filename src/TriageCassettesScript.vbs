@@ -1,4 +1,4 @@
-'This script was written to help pathology technicians print cassettes while prioritizing cassettes printed by PAs
+'This script was written to change the exit bin for cassettes printed and to prioritize smaller batches
 
 Say "Hello!"
 Say "Checking folders..."
@@ -19,16 +19,10 @@ Else
 End If
 
 Wscript.Sleep 1000
-If WScript.Arguments(0) = "DismissAMP" Then DismissAMPSetting = True
-If WScript.Arguments(1) = "PrintCassettes" Then PrintCassettesSetting = True
-If Not WScript.Arguments(2) = "ExitBin1" Then ChangeExitBin = True
-If WScript.Arguments(2) = "ExitBin2" Then ExitBin = 2
-If WScript.Arguments(2) = "ExitBin3" Then ExitBin = 3
+If Not WScript.Arguments(0) = "ExitBin1" Then ChangeExitBin = True
+If WScript.Arguments(0) = "ExitBin2" Then ExitBin = 2
+If WScript.Arguments(0) = "ExitBin3" Then ExitBin = 3
 
-If DismissAMPSetting Then Say "The 'Yes' button will be clicked when the AMP Warning appears"
-Wscript.Sleep 3000
-If PrintCassettesSetting Then Say "The 'Print' button will be clicked a few seconds after"
-Wscript.Sleep 3000
 If ChangeExitBin Then Say "The cassettes will be printed to Exit Bin " & ExitBin
 Wscript.Sleep 3000
 
@@ -40,14 +34,10 @@ Else
     msgbox "Unknown folder set"
 End If
 
-Say "Changed DIS settings to triage cassettes. Please remember to click the 'Stop' button to revert settings."
+Say "Changed DIS settings. Please remember to click the 'Stop' button to revert settings."
 Say "Now ready!"
 
 Do
-
-    If shell.AppActivate("AMP Grossing Station Warning") Then
-        If DismissAMPSetting Then DismissAMP
-    End If
 
     If FSO.FolderExists(CassetteTriageFolder) And FSO.FolderExists(OutputFolder) Then
 
@@ -63,6 +53,7 @@ Do
 
             CassetteCount = 0
             TotalCassettes = Files.Count
+            If TotalCassettes > 4 Then LargeBatch = True Else LargeBatch = False 
 
             For Each file in Files
 
@@ -90,11 +81,12 @@ Do
                     file.move OutputFolder
                     Say file.name & " sent to printer. " & Files.Count & " remain. Please don't stop script."
                     If CassetteCount = TotalCassettes Then Say "Now safe to stop script."
-                    
-                For Index = 1 to 11 'seconds (change this value to control how long it takes for the queue to be processed)
-                    Wscript.Sleep 1000
-                    If DismissAMPSetting Then DismissAMP
-                Next
+                
+                If LargeBatch Then
+                    For Index = 1 to 11 'seconds (change this value to control how long it takes for the queue to be processed)
+                        Wscript.Sleep 1000
+                    Next
+                End If
 
             Next
 
@@ -110,41 +102,11 @@ Do
 
 Loop
 
-
 shell.RegWrite "HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\IMPAC\PseudoDriver\CIV-GRO-CAS1\v1.0\Directory Path", DefaultFolder, "REG_SZ"
     
 Set FSO = Nothing
 Set shell = Nothing
  
-Sub DismissAMP
-
-    If shell.AppActivate("AMP Grossing Station Warning") Then
-        Wscript.Sleep 1000 
-
-        shell.Sendkeys "y", True
-        Wscript.Sleep 500
-        shell.Sendkeys "~", True
-        Wscript.Sleep 1000
-
-        If shell.AppActivate("Confirm") Then
-            Wscript.Sleep 500            
-            shell.Sendkeys "n", True
-            Wscript.Sleep 500
-            shell.Sendkeys "~", True
-            Wscript.Sleep 500
-        End If
-
-        shell.AppActivate("PowerPath Advanced")
-        Wscript.Sleep 500
-
-        If PrintCassettesSetting Then shell.Sendkeys "%p", True
-        
-        Wscript.Sleep 500
-
-    End If
-
-End Sub
-
 Function Say(message)
     WScript.StdOut.Write message
     WScript.StdOut.WriteLine
