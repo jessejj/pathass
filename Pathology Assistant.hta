@@ -104,7 +104,7 @@ body {
 
     Sub TriageCassettes
 	    Set objShell = CreateObject("wscript.Shell")
-		objShell.run "cscript.exe src/TriageCassettesScript.vbs " & document.GetElementByID("ExitBin").value
+		objShell.run ("%comspec% /K title Cassette Script | cscript.exe src/TriageCassettesScript.vbs " & document.GetElementByID("ExitBin").value)
 	    Set objShell = Nothing
 
 		document.GetElementByID("RunButton").disabled = true
@@ -115,7 +115,7 @@ body {
         document.getElementById("Back").disabled = False
         document.GetElementByID("RunButton").disabled = False
 	    Set objShell = CreateObject("wscript.Shell")
-		objShell.run "taskkill.exe /F /IM cscript.exe /T"
+		objShell.run "taskkill.exe /F /IM cmd.exe /FI 'WINDOWTITLE ne Cassette Script'"
 		objShell.regwrite "HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\IMPAC\PseudoDriver\CIV-GRO-CAS1\v1.0\Directory Path", "\\CLPATHIF01\DIS_SHARE", "REG_SZ"
 	    Set objShell = Nothing
 	End Sub
@@ -191,6 +191,30 @@ body {
 
 	End Sub
 
+    Sub Form
+        ClearIDs
+        document.getElementById("Back").disabled = False
+        document.getElementById("title").innerHTML = "Form"
+
+        formcheckboxesHTML = "<input type='checkbox' id='SpecimenCode' name='SpecimenCode' value='SpecimenCode'><label for='SpecimenCode'> Specimen Code</label><br><input type='checkbox' id='OpeningFeedback' name='OpeningFeedback' value='OpeningFeedback'><label for='OpeningFeedback'> Opening Feedback</label><br>"
+        formtextHTML = "<label for='text'>Details: </label><input type='text' id='text' name='text'>"
+
+        document.getElementById("1").innerHTML = formcheckboxesHTML
+        document.getElementById("2").innerHTML = formtextHTML
+        document.getElementById("3").innerHTML = "<input type='submit' onclick='email' value='Email'>"
+
+    End Sub
+
+    Sub Email()
+        Set shell = CreateObject("WScript.Shell")
+        Subject = document.getElementById("text").value
+        MsgBody = "Hi,%0A%0A"
+        If document.getElementById("SpecimenCode").checked = true Then MsgBody = MsgBody & "Specimen%20Code%0A"
+        If document.getElementById("OpeningFeedback").checked = true Then MsgBody = MsgBody & "Opening%20Feedback%0A"        
+        URL = "https://outlook.office.com/mail/deeplink/compose?to=j@eorla.ca&subject=" & Subject & "&body=" & MsgBody
+        shell.run URL
+    End Sub
+
 </script>
 
 <div id="body">
@@ -201,7 +225,7 @@ body {
 <p id="1"><button class="button" type="button" onclick="Cassettes">Cassettes</button> </p>
 <p id="2"><button class="button" type="button" onclick="Report">Report</button> </p>
 <p id="3"><button class="button" type="button" onclick="Leaderboard">Leaderboard</button> </p>
-<p id="4"> </p>
+<p id="4"><button class="button" type="button" onclick="Form">QA Form</button> </p>
 <p id="5"> </p>
 <p id="6"> </p>
 <p id="7"> </p>
