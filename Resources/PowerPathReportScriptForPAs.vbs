@@ -9,6 +9,8 @@ grossHeader = "GROSS DESCRIPTION:"
 microHeader = "MICROSCOPIC DESCRIPTION:"
 synoHeader = "SYNOPTIC REPORT:"
 
+
+DocumentCount = 1
 Say "Script starting..."
 Wait 1
 
@@ -35,7 +37,7 @@ If WordIsRunning Then
             ElseIf NumberOfFields < KnownNumberOfFields - 1 Then
                 'user deleted a bunch of fields
                 KnownNumberOfFields = NumberOfFields
-            ElseIf NumberOfFields = KnownNumberOfFields Then
+            'ElseIf NumberOfFields = KnownNumberOfFields Then
                 Wait 1
             End If
         End If
@@ -76,13 +78,15 @@ End Function
 
 Function ReportIsOpen
     If wordObj.Documents.Count = 0 Then Say "There are no documents open."
-    If Not wordObj.Documents.Count = DocumentCount Or DocumentCount = 1 Then
+    If Not wordObj.Documents.Count = DocumentCount Then 'this is stopping ReportIsOpen from being true; need to make sure the flag sticks and also monitor for changing doc counts
         If wordObj.Documents.Count = 0 Then
             Say "There are no documents open."
         Else
+            Wait 5  'added delay taht should only happen when doc count changes, to allow for reports to open without a unspecified error
+            Say "Number of documents changed."
             For Each prop In wordObj.ActiveDocument.CustomDocumentProperties
                 If prop.Name = "CaseID" Then
-                    checkCaseID = prop.Value
+                    checkCaseID = prop.Value    'unspecified error occurs here after report opens from powerpath 
                     Exit For
                 End If
             Next
