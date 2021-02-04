@@ -104,7 +104,7 @@ body {
 
     Sub TriageCassettes
 	    Set objShell = CreateObject("wscript.Shell")
-		objShell.run ("%comspec% /K title Cassette Script | cscript.exe src/TriageCassettesScript.vbs " & document.GetElementByID("ExitBin").value)
+		objShell.run ("%comspec% /K title Cassette Script | cscript.exe Resources/TriageCassettesScript.vbs " & document.GetElementByID("ExitBin").value)
 	    Set objShell = Nothing
 
 		document.GetElementByID("RunButton").disabled = true
@@ -127,7 +127,7 @@ body {
 
     Sub Report
     ClearIDs
-        StartStopButtonsHTML = "<button type='button' onclick=ReportScript id='RunButton' name='RunButton'>Run</button> &nbsp; <button type='button' onclick=StopScript id='StopButton' name='StopButton'>Stop</button>"
+        StartStopButtonsHTML = "<button type='button' onclick=ReportScriptPA id='RunButton' name='RunButton'>Run</button> &nbsp; <button type='button' onclick=StopScript id='StopButton' name='StopButton'>Stop</button>"
 
         document.getElementById("Back").disabled = False
         document.getElementById("title").innerHTML = "Report"
@@ -137,7 +137,16 @@ body {
 
     Sub ReportScript
 	    Set objShell = CreateObject("wscript.Shell")
-		objShell.run "cscript.exe src/NextItemScript.vbs"
+		objShell.run "cscript.exe Resources/NextItemScript.vbs"
+	    Set objShell = Nothing
+
+		document.GetElementByID("RunButton").disabled = true
+        document.getElementById("Back").disabled = true
+    End Sub
+
+    Sub ReportScriptPA
+	    Set objShell = CreateObject("wscript.Shell")
+		objShell.run "cscript.exe -b -nologo -x Resources/PowerPathReportScriptForPAs.vbs"
 	    Set objShell = Nothing
 
 		document.GetElementByID("RunButton").disabled = true

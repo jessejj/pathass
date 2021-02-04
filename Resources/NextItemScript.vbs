@@ -1,7 +1,4 @@
-Dim scriptVersion
-scriptVersion = "Next Item Script 2020.1106" 'by Jesse Pelley
-
-'This script was written to help Pathologist Assistants describe specimens more efficiently while they dissect
+'This script was written to help Pathologist Assistants navigate reports efficiently while they dissect
 
 pauseTime=250           'in milliseconds
 cassetteKeyFill=True    'autofills the first block and guesses the last block in a range based on the number of pieces
