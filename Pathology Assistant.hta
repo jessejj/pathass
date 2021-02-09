@@ -146,7 +146,7 @@ body {
 
     Sub ReportScriptPA
 	    Set objShell = CreateObject("wscript.Shell")
-		objShell.run "cscript.exe -b -nologo -x Resources/PowerPathReportScriptForPAs.vbs"
+        objShell.run ("%comspec% /K title Report Script | cscript.exe -b -nologo Resources/PowerPathReportScriptForPAs.vbs")
 	    Set objShell = Nothing
 
 		document.GetElementByID("RunButton").disabled = true

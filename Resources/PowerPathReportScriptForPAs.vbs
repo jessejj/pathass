@@ -1,7 +1,6 @@
 Dim wordObj
 
 Dim lastMessage
-pauseTime = 250
 AutoNextItem = True 'user setting, future command flag
 
 Dim grossHeader, microHeader, synoHeader
@@ -9,15 +8,22 @@ grossHeader = "GROSS DESCRIPTION:"
 microHeader = "MICROSCOPIC DESCRIPTION:"
 synoHeader = "SYNOPTIC REPORT:"
 
-Say "Script starting..."
-Wait 1
+Say "This script monitors the text of the report that you are dictating by counting the number of fields."
+Wait 2
+Say "When you fill in a field, the script will advance to the next."
+Wait 2
+Say "You can freetext without advancing automatically by first saying 'go left'."
+Wait 2
+Say "The script may stop unexpectedly when you close a report without finishing all of the blank fields first."
+WScript.StdOut.WriteLine
+Wait 2
 
 Do
 WScript.Sleep 1000
 If WordIsRunning Then
     If ReportIsOpen Then
         'do things, set user settings, etc
-        Say "If you can read this, good things are happening"
+        'Say "If you can read this, good things are happening"
         If AutoNextItem Then
             NumberOfFields = CountFields()
             If NumberOfFields = KnownNumberOfFields - 1 Then
@@ -39,12 +45,13 @@ If WordIsRunning Then
                 Wait 1
             End If
         End If
+        Set wordObj = Nothing
     End If
 End If
 Loop 'Can run indenfinitely because user has access to cmd window
 
 Function Say(message)
-    'If Not message = lastMessage Then
+    If Not message = lastMessage Then
         lastMessage = message
         On Error Resume Next
         WScript.StdOut.Write message
@@ -54,7 +61,7 @@ Function Say(message)
         End If
         WScript.StdOut.WriteLine
         'If WordIsRunning Then wordObj.StatusBar = message
-    'End If
+    End If
 End Function
 
 Function Wait(seconds)
@@ -66,21 +73,24 @@ Function WordIsRunning
     Set wordObj = GetObject(,"Word.Application")
     If Err.Number = 0 Then 
         WordIsRunning = True 
-        Say "Word is running"
+        'Say "Word is running"
     Else
-        Say "Waiting for Microsoft Word."
+        Say "Waiting for Microsoft Word..."
         WordIsRunning = False
         Wait 10
     End If
 End Function
 
 Function ReportIsOpen
+    On Error Resume Next
     If wordObj.Documents.Count = 0 Then Say "There are no documents open."
+    If Not Err.Number = 0 Then Exit Function
     If Not wordObj.Documents.Count = DocumentCount Or DocumentCount = 1 Then
         If wordObj.Documents.Count = 0 Then
             Say "There are no documents open."
         Else
             For Each prop In wordObj.ActiveDocument.CustomDocumentProperties
+            If Not Err.Number = 0 Then Exit Function
                 If prop.Name = "CaseID" Then
                     checkCaseID = prop.Value
                     Exit For
@@ -92,7 +102,7 @@ Function ReportIsOpen
                 ReportIsOpen = False
                 Wait 5
             Else
-                Say "Report is ready."
+                'Say "Report is ready."
                 ReportIsOpen = True
             End If
         End If
