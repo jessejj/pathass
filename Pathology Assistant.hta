@@ -63,10 +63,12 @@ body {
         Set o = CreateObject("MSXML2.XMLHTTP")
         o.open "GET", "https://api.github.com/repos/jessepelley/pathologyAssistant/tags", False
         o.send
-
+        
         If o.Status = 200 Then
             json = o.responseText
         End If
+
+        document.GetElementByID("title").innerHTML = "Pathology Assistant App"
 
         If InStr(json, PA.Version) = 0 then 
             UpdateText = "Unsupported Version" & "<input type='button' onclick='openLink()' value='Download'>" 
@@ -230,7 +232,7 @@ body {
 <body style="font-family:'Segoe UI', Roboto,'Helvetica Neue',Arial,'Noto Sans',sans-serif; margin: 30px" >
 
 <div id="home">
-<h1 style="text-align:center" id="title">Pathology Assistant App</h1>
+<h1 style="text-align:center" id="title">IF YOU ARE READING THIS YOU DID NOT EXTRACT THE ARCHIVE. PLEASE CLOSE AND EXTRACT AND UNCHECK 'ALWAYS CHECK'</h1>
 <p id="1"><button class="button" type="button" onclick="Cassettes">Cassettes</button> </p>
 <p id="2"><button class="button" type="button" onclick="Report">Report</button> </p>
 <p id="3"><button class="button" type="button" onclick="Leaderboard">Leaderboard</button> </p>
