@@ -16,215 +16,128 @@
         
     />
 <style>
-html,
-body {
-   margin:0;
-   padding:0;
-   height:100%;
-}
-#container {
-   min-height:100%;
-   position:relative;
-}
-#header {
-   padding:10px;
-}
-#body {
-   padding:10px;
-   padding-bottom:60px;   /* Height of the footer */
-}
-#footer {
-   position:absolute;
-   bottom:0;
-   width:100%;
-   height:60px;   /* Height of the footer */
-}
 
-#container {
-   height:100%;
-}
 </style>
 </head>
 </div>
 
+<script lang="javascript">
+
+	window.onload = (function main(){
+		window.resizeTo(700, 950);
+		ClearIDs();
+		document.getElementById("footer").innerHTML = "Checking for updates";
+
+		o = new XMLHttpRequest();
+		o.open("GET", "https://api.github.com/repos/jessepelley/pathologyAssistant/tags", false);
+		o.send();
+
+		if (o.status == 200) {
+			json = o.responseText;
+		}
+
+		document.getElementById("title").innerHTML = "Pathology Assistant App";
+
+		if (json.indexOf(PA.version) == -1) {
+			UpdateText = "<input type='button' onclick='openLink()' value='Update'><br><i>Unsupported Version</i>";
+			Supported = false;
+		} else {
+			UpdateText = "Supported Version";
+			Supported = true;
+		}
+
+		document.getElementById("footer").innerHTML = UpdateText;
+
+		if (Supported) {
+			for (i = 1; i < 11; i++){
+			document.getElementById(i).disabled = false;
+			}
+
+			document.getElementById(1).innerHTML = '<button class="button" type="button" onclick="PowerPathSetup()">PowerPath Setup</button>';
+			document.getElementById(2).innerHTML = '<button class="button" type="button" onclick="Cassettes()">Cassettes</button>';
+			document.getElementById(3).innerHTML = '<button class="button" type="button" onclick="Commands()">Commands</button>';
+		}
+		document.getElementById(10).innerHTML = '<button class="button" type="button" onclick="Help()">Help</button>';
+	})
+
+	function Help() {
+		helpURL = "https://outlook.office.com/mail/deeplink/compose?to=jpelley@eorla.ca&subject=Pathology%20Assistant%20App&body=%0A%0A%0A%0A%0A%0A%0A%0A%0A%0AApp%20Version%20";
+		var shell = new ActiveXObject("wscript.shell");
+		shell.run(helpURL + PA.version);
+	}		
+	
+	function Commands() {
+		ClearIDs();
+		document.getElementById("Back").disabled = false;
+		document.getElementById("title").innerHTML = "Commands";
+		document.getElementById("1").innerHTML = '<button class="button" type="button" onclick="" disabled>Delete block</button>';
+		document.getElementById("2").innerHTML = '<button class="button" type="button" onclick="" disabled>Duplicate block</button>';
+		document.getElementById("3").innerHTML = '<button class="button" type="button" onclick="" disabled>Next block</button>';
+		document.getElementById("4").innerHTML = '<button class="button" type="button" onclick="" disabled>My Signature</button>';
 
 
-<script language="VBScript">
-    Sub Window_onLoad
-        window.resizeTo 700,600
+	}	
+	
+	function PowerPathSetup() {
+		ClearIDs();
+		PowerPathDBHTML = '<input onchange=EnableApplyButton() type="checkbox" id="PowerPathDB" name="PowerPathDB" value="PowerPathDB"><label for="PowerPathDB"> Database set to CLPATHDB01</label><br>';
 
-        For Index = 1 to 10
-            document.getElementById(Index).disabled = True
-        Next
 
-        document.getElementById("footer").innerHTML = "Checking for updates"
-        
-        Dim o
-        Set o = CreateObject("MSXML2.XMLHTTP")
-        o.open "GET", "https://api.github.com/repos/jessepelley/pathologyAssistant/tags", False
-        o.send
-        
-        If o.Status = 200 Then
-            json = o.responseText
-        End If
+		document.getElementById("Back").disabled = false;
+		document.getElementById("title").innerHTML = "PowerPath Setup";
+		document.getElementById("1").innerHTML = PowerPathDBHTML;
+		//document.getElementById("2").innerHTML = BinHTML;
 
-        document.GetElementByID("title").innerHTML = "Pathology Assistant App"
+		//document.getElementById("PowerPathDB").checked = true;
+	}
 
-        If InStr(json, PA.Version) = 0 then 
-            UpdateText = "Unsupported Version" & "<input type='button' onclick='openLink()' value='Download'>" 
-        Else 
-            UpdateText = "Supported Version"
-                For Index = 1 to 10
-                    document.getElementById(Index).disabled = False
-                Next
-        End If
 
-        document.getElementById("footer").innerHTML = UpdateText 
-        Set o = Nothing
-    End Sub
+	function Cassettes(){
+		if (Supported){
+			ClearIDs();
+			CASoptionsHTML = "<option value = ''></option><option value = 'CIV-GRO-CAS1'>CIV-GRO-CAS1</option>";
+			PowerPathCassettesHTML = "PowerPath Auto Print: <select onchange=EnableApplyButton() name = 'CAS' id = 'CAS'>" + CASoptionsHTML + "</select>";
+			BinHTML = "Exit bin: <select onchange=EnableApplyButton() name = 'ExitBin' id = 'ExitBin'> <option value = 'ExitBin1' selected>Bin 1</option><option value = 'ExitBin2'>Bin 2</option><option value = 'ExitBin3'>Bin 3</option></select>";
 
-    Sub ClearIDs
+			document.getElementById("Back").disabled = false;
+			document.getElementById("title").innerHTML = "Cassettes";
+			document.getElementById("1").innerHTML = PowerPathCassettesHTML;
+			document.getElementById("2").innerHTML = BinHTML;
 
-    For Index = 1 to 10
-        document.getElementById(Index).innerHTML = ""
-    Next
+			document.getElementById("Apply").onclick = function() {ApplyCassettes()}
+		}
+	}
 
-    End Sub
+	function EnableApplyButton(){
+		document.getElementById("Apply").disabled = false;
+	}
 
-    Sub Cassettes
-    ClearIDs
+	function ApplyCassettes(){
+		selectedExitBin = document.getElementById("ExitBin").value;
+		if (selectedExitBin == "ExitBin2" || selectedExitBin == "ExitBin3") {
+			shell = new ActiveXObject("wscript.shell");
+			shell.run ("%comspec% /K title Cassette Script | cscript.exe /nologo Resources/TriageCassettesScript.vbs " + document.getElementById("ExitBin").value);
+		}
+	}
 
-        BinHTML = "Choose exit bin: <select name = 'ExitBin' id = 'ExitBin'> <option value = 'ExitBin1' selected>Bin 1</option><option value = 'ExitBin2'>Bin 2</option><option value = 'ExitBin3'>Bin 3</option></select>"
-        StartStopButtonsHTML = "<button type='button' onclick=TriageCassettes id='RunButton' name='RunButton'>Run</button> &nbsp; <button type='button' onclick=StopScript id='StopButton' name='StopButton'>Stop</button>"
+	function TriageCassettes(){
+		if (Supported) {
+			var shell = new ActiveXObject("wscript.shell");
+			shell.run ("%comspec% /K title Cassette Script | cscript.exe /nologo Resources/TriageCassettesScript.vbs " + document.getElementById("ExitBin").value);		}
+	}
 
-        document.getElementById("Back").disabled = False
-        document.getElementById("title").innerHTML = "Cassettes"
-        document.getElementById("1").innerHTML = BinHTML
-        document.getElementById("2").innerHTML = StartStopButtonsHTML
+	function ClearIDs(){
+		for (i = 1; i < 11; i++){
+			document.getElementById(i).innerHTML = "&nbsp;";
+		}
+	}
 
-    End Sub
+	function openLink(){
+		var shell = new ActiveXObject("wscript.shell");
+		shell.run("https://github.com/jessepelley/pathologyAssistant/releases");
+	}
 
-    Sub TriageCassettes
-	    Set objShell = CreateObject("wscript.Shell")
-		objShell.run ("%comspec% /K title Cassette Script | cscript.exe Resources/TriageCassettesScript.vbs " & document.GetElementByID("ExitBin").value)
-	    Set objShell = Nothing
-
-		document.GetElementByID("RunButton").disabled = true
-        document.getElementById("Back").disabled = true
-    End Sub
-
-	Sub StopScript
-        document.getElementById("Back").disabled = False
-        document.GetElementByID("RunButton").disabled = False
-	    Set objShell = CreateObject("wscript.Shell")
-		objShell.run "taskkill.exe /F /IM cmd.exe /FI 'WINDOWTITLE ne Cassette Script'"
-		objShell.regwrite "HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\IMPAC\PseudoDriver\CIV-GRO-CAS1\v1.0\Directory Path", "\\CLPATHIF01\DIS_SHARE", "REG_SZ"
-	    Set objShell = Nothing
-	End Sub
-
-    Sub openLink
-        Set shell = CreateObject("WScript.Shell")
-        shell.run "https://github.com/jessepelley/pathologyAssistant/releases"
-    End Sub
-
-    Sub Report
-    ClearIDs
-        StartStopButtonsHTML = "<button type='button' onclick=ReportScriptPA id='RunButton' name='RunButton'>Run</button> &nbsp; <button type='button' onclick=StopScript id='StopButton' name='StopButton'>Stop</button>"
-
-        document.getElementById("Back").disabled = False
-        document.getElementById("title").innerHTML = "Report"
-
-        document.getElementById("2").innerHTML = StartStopButtonsHTML
-    End Sub
-
-    Sub ReportScript
-	    Set objShell = CreateObject("wscript.Shell")
-		objShell.run "cscript.exe Resources/NextItemScript.vbs"
-	    Set objShell = Nothing
-
-		document.GetElementByID("RunButton").disabled = true
-        document.getElementById("Back").disabled = true
-    End Sub
-
-    Sub ReportScriptPA
-	    Set objShell = CreateObject("wscript.Shell")
-        objShell.run ("%comspec% /K title Report Script | cscript.exe -b -nologo Resources/PowerPathReportScriptForPAs.vbs")
-	    Set objShell = Nothing
-
-		document.GetElementByID("RunButton").disabled = true
-        document.getElementById("Back").disabled = true
-    End Sub
-
-	Sub Leaderboard()
-        ClearIDs
-        document.getElementById("Back").disabled = False
-        document.getElementById("title").innerHTML = "Leaderboard"
-		
-		Set objConnection = CreateObject("ADODB.Connection")
-		Set myRecordSet = CreateObject("ADODB.Recordset")
-
-		DatabasePath = "\\ohpathdragon01\voicebrook\Admin\Commands\STATS\Grossing Statistics.accdb"
-
-		If objConnection.State = adStateClosed Then
-			objConnection.ConnectionString = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" & DatabasePath & ";"
-			objConnection.Open
-		End If
-
-		myRecordSet.ActiveConnection = objConnection
-
-		SQL = "SELECT TOP 10 SaveGrossRecords.[ProcedureDate], SaveGrossRecords.[SaveTime], SaveGrossRecords.[Code], SaveGrossRecords.[AccessionNo], SaveGrossRecords.[Initials] "
-		SQL = SQL & "FROM SaveGrossRecords "
-		SQL = SQL & "WHERE (((SaveGrossRecords.[ProcedureDate])>0) AND ((SaveGrossRecords.[SaveTime])>Date())) "
-		SQL = SQL & "ORDER BY SaveGrossRecords.[ProcedureDate] ASC"
-
-		myRecordSet.Open SQL
-
-        For Index = 1 To 5
-
-            RowDate = myRecordSet.Fields(0).value
-            'RowDate = "2020-05-11 10:29:00"
-            RowDate = Replace(FormatDateTime(RowDate,1), ", " & Year(RowDate),"")
-
-            imgHTML = "<img width='30' height='30'>"
-            If Index = 1 Then imgHTML = "<img src=data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEgAAABICAMAAABiM0N1AAAABGdBTUEAALGPC/xhBQAAAAFzUkdCAK7OHOkAAABdUExURUdwTAAAAPA4EAAAAAAAAAAAAAAAAAAAAAAAAAAAAP+6ANWOALEFEv/+/u6pAP3YyTkSAN4wDvRlSOKcAMUmDPmun2QRAveNeJ1xAGFFAJMdBcSPAPynBfmAA//FIz8jjXcAAAAKdFJOUwAf//9+sQjTS/PVaQLlAAACk0lEQVRYw+2Y23arIBCGPaEoiYeSJhq17/+YFdgCgyhjkrWv+t90tQ4/Mx8jWKLoT0jlWVGmL6gsstz2iYv0ZRWxlc8bPouTySlL31KmjURCbZckSXO9Xr8Socuu5OOvJbBZfnatSEkbCc6d/XyJ2PORcXLGh4wTxLdGVko3v88tcSYERqK0e4JKyZ3vDkqTsNVc32vO/pRU0GMJ+lZBELaiLZ8kS8w12eXtxrRw+SMqjJ/ObN1eYSbrpxhH7dYmqYd3YOkV6ZSAdy0uPbxvbufdPKTLGL61Xt536HMPkDavm8u7g0ZdgPQB76ft8wySPuDdGp82TBrHG0MawxtFGsPbV/SWdJg3lvQBb2WEJb3h/dBjLmLMxYPOT3rDG9BofYuZHR1vhdsw8zxNdT1N84wlveG91NFMla0GLAA9PnKJJps0P5WjHxRpl/dceTTrJo1DXwEr76nyakKQVrj/8d7xEU6CdJmHP0zkdwDXA2vOFvFa/4FjCK3r1utRTEt794g1W0+mNRsGtGYFz/ujhLjXRztxTEqijwbgI0dDpyFMKRdtNKpwe+yak3oyhteNGkLcHuoQb4O1ZaYy5jNiprYsiKh3SAOjWncACS4+czoIGHG9bscNIFhDvI6RmqUG32k+iQ6pwkaViPs/Rh8rDQmbBWF/bPn3GlL/OiEbkhra3GfEDWt68qWFRuiXdruNACP8NqJqY8cbG0PttZ/aaj+3+atDe9w/jkbkcaQO7ZTtHZASUBkjjFRxVk5AMh9MYeZ/5d7n06eogx86tZvyWHvOR///PoD6xiE967NwWi84hl60T836Yb3EoNEpxcR/WUDi6Kyo556joNErogTc4JTkNRu5q9CMiPugsiAZzaM/vadf5bBbGKJ2DicAAAAASUVORK5CYII width='30' height='30'>"
-            If Index = 2 Then imgHTML = "<img src=data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEgAAABICAMAAABiM0N1AAAABGdBTUEAALGPC/xhBQAAAAFzUkdCAK7OHOkAAABjUExURUdwTAAAAAAAAC3T9wAAAAAAAAAAAAAAAAAAAAAAAM3NzXZ2dgB62f7//6mpqsHCwtn1/JaWliS95hMxOEzZ+HTg+IGBgaXs/AB10SKryQxXZ0xMTKnP2RZ8khqOp1V3fwd3wLYO8tAAAAAKdFJOUwCI//8IH3TUS7HVhcskAAACtUlEQVRYw+2Y6ZKqMBCFWQXMNRhZRgR8/8cckkCWpoF2qftrTtXUqCSHPl82NAj+RFRyyqK3lJ0S1yd900ZZpU49H/hMTramU/SRTsZIFlTd4ji+Xi6XOpb6tyl1uZ4aXqf/t0qWZIykrfSJm/n61GLLR7VTd2xUO9l3bWQb6JLu4G8pyLmhZySjPbyS8XD32cdB8PCiKdiduvAzNflxwoF6bqBR58PWtOHNTG+M9EW3rvzhD3JpPJr4bknG7e4VpEGOsl/uTu0C5X0HQkkX3lpLI4R3B2deh5COUn/VAt6NbWj1ANkhabvcKsuyNqVb6ejm6or0Du/R9RkPSaO87U1nVYAgQnrFu8F4d2BMMdIU3ijpEN9uAe/Y442FXpN2eD/Bahohaf3xc4P0Dm9tRCW9w/tp66SQ1gqx4akWcmAww73jLQMTpm6GoZw0DE1NJI3yHs6urjTSDu95izuvNO/C+6Qh7+GMaKCQ9nmjPsrpkLTHe8NnEoG0Q4kv3UouWsZawUvzSeSdQPvjxpZOghmJxaoljNlyMs1dOPO0lFlRSsqdYMDHOHFKSZJQ7/gYWO67/ngeJfJmQjf3fLRTW9qSkuNkuqPi7I67Iq5fHmcLTbKSYUasNNnCQ0QtQtoY6aziEFJmxkzgRsJA2p8AMryuvl2Nu3rV2tl9aOQQ0dJjxZlDjWRUAiPhRX3ZqPVilctbarQVbB3L+JBhw+EXcCpwswEU/2dCfm2JOIu2xIzIixZuI8CIvo18b2P72lZL2PwZbfPXx5HYPo4E5cA2h3bEt85HBej4wDbhbE2+VD2UYPa7MsN8WIR9bdh/kIiqVTyun9/DgKz5+3vv5RN99Fo9lpP0arl89ONtv3ySBy8pLfAfC4o0eFU58jtHlgfvKAdVFe/ZqF0lDwtVWFaEeRL86TP9Au8XW/ZYgS+oAAAAAElFTkSuQmCC width='30' height='30'>"
-            If Index = 3 Then imgHTML = "<img src=data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEgAAABICAMAAABiM0N1AAAABGdBTUEAALGPC/xhBQAAAAFzUkdCAK7OHOkAAABpUExURUdwTAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA7HBPeKScxPBwZ9Bv///95nI++EQgu2AzHNJeZ1MuL44QifA1MqEo7lilzZVAAvAMx0OrzvuQJVAJhSKb5pNdGYQfTav6OhL3GvIOO6FiMAAAAKdFJOUwB0iP+xCB/TS/OdbSw3AAACqElEQVRYw+2Y25aCIBSGTfBcaZpOOpo17/+QI6DAFhAq11zNf9NaiT97f5uTeN6/HBUcogS9oSQ6BLJPGKG3FYVSPB/4TE4ipgP6SAduRAJqL2maXs/nc5kSnYyij8up4XX6vbQkJG5EOBOf9DY9/6YtLyYf2i79nhreaDtCXDUSDdJa71Onqw6BEUmtByEbQ2L9CQQ9SI3CZn19TU2+zCEpjSBsRjtddWYlPamF5fdiYnxKrbzXIE/kvVge2hhpeBsCgqQRBnMtTDS86/XIq3lPgnQSwlmr5d1Dn54HpCctphvjXU68ryUPXegCnyqkFd4ipJPso30Yq0uSxFsMgVb4tOsRq5JWeIu61DrSNyNphTdsLgW06sLXL7eRKQFT0ippO+/ekfQGb2bkStrG++RMmsnX8W5fIm3gXf48x2LS+PwpHUnreD/GTNL4cCMt8WaL1iNT9HAhveb9zDR68kEa2k4BC+8x02p0IA14G3yIEyGdBPaDCT0HdMt7RZUfJ+VVsfzTuRBa6jYsNtSFKV+sBoeazQE18yvVEaia/27AprgVUKf14U6dS0hYBER98gVNLjk1dkoBGUZ31hz4zE6M091eN5qZ9KJceMnYnpvPMyuOOqM5pMY6JDGvPSTNjSqeG7YWvxOZqUY5r9v2ACCsC5EI4C0sswKc03RCilGeaYwo7b8xIqlVe6S2G2xR/k2jwVr+3QbkblNEmrTFR5N2t2Vkv4Vtt6V2v8Wfbdp3vh3lbDviNpS0y3bENm2xsa1FASWhgxFLTsQEReNxSUx8Kw86nwHpPhu2DxKoUdLrGuR2gFh/vzcgv3uDXouHclouOJqhq4qi6oZmucSIvZcUYv1lAQ69VxVr7jmi2HtHMQY3OAl+z4auKrGPyX1QEmE/Drx/faZfyfpxnqnxQUkAAAAASUVORK5CYII width='30' height='30'>"
-
-            document.getElementById(Index).innerHTML = imgHTML & " " & myRecordSet.Fields(4).value & " grossed " & myRecordSet.Fields(2).value & " from " & RowDate & " (" & myRecordSet.Fields(3).value & ")"
-
-            If Not Index = 5 Then myRecordSet.Move 1
-        Next
-
-		//'myRecordSet.Close
-
-		Set objConnection = Nothing
-		Set myRecordSet = Nothing
-
-	End Sub
-
-    Sub Form
-        ClearIDs
-        document.getElementById("Back").disabled = False
-        document.getElementById("title").innerHTML = "Form"
-
-        formcheckboxesHTML = "<input type='checkbox' id='SpecimenCode' name='SpecimenCode' value='SpecimenCode'><label for='SpecimenCode'> Specimen Code</label><br><input type='checkbox' id='OpeningFeedback' name='OpeningFeedback' value='OpeningFeedback'><label for='OpeningFeedback'> Opening Feedback</label><br>"
-        formtextHTML = "<label for='text'>Details: </label><input type='text' id='text' name='text'>"
-
-        document.getElementById("1").innerHTML = formcheckboxesHTML
-        document.getElementById("2").innerHTML = formtextHTML
-        document.getElementById("3").innerHTML = "<input type='submit' onclick='email' value='Email'>"
-
-    End Sub
-
-    Sub Email()
-        Set shell = CreateObject("WScript.Shell")
-        Subject = document.getElementById("text").value
-        MsgBody = "Hi,%0A%0A"
-        If document.getElementById("SpecimenCode").checked = true Then MsgBody = MsgBody & "Specimen%20Code%0A"
-        If document.getElementById("OpeningFeedback").checked = true Then MsgBody = MsgBody & "Opening%20Feedback%0A"        
-        URL = "https://outlook.office.com/mail/deeplink/compose?to=j@eorla.ca&subject=" & Subject & "&body=" & MsgBody
-        shell.run URL
-    End Sub
+	
 
 </script>
 
@@ -233,29 +146,20 @@ body {
 
 <div id="home">
 <h1 style="text-align:center" id="title">IF YOU ARE READING THIS YOU DID NOT EXTRACT THE ARCHIVE. PLEASE CLOSE AND EXTRACT AND UNCHECK 'ALWAYS CHECK'</h1>
-<p id="1"><button class="button" type="button" onclick="Cassettes">Cassettes</button> </p>
-<p id="2"><button class="button" type="button" onclick="Report">Report</button> </p>
-<p id="3"><button class="button" type="button" onclick="Leaderboard">Leaderboard</button> </p>
-<p id="4"><button class="button" type="button" onclick="Form">QA Form</button> </p>
-<p id="5"> </p>
-<p id="6"> </p>
-<p id="7"> </p>
-<p id="8"> </p>
-<p id="9"> </p>
-<p id="10"> </p>
-<p id="11"> </p>
-<p id="12"> </p>
-<p id="13"> </p>
-<p id="14"> </p>
-<p id="15"></p>
+<p id="1"></p>
+<p id="2"></p>
+<p id="3"></p>
+<p id="4"></p>
+<p id="5"></p>
+<p id="6"></p>
+<p id="7"></p>
+<p id="8"></p>
+<p id="9"></p>
+<p id="10"></p>
 </div>
-<input class="button" type=button value="Back" id="Back" onClick="window.location.reload()" disabled>
+<input class="button" type=button value="Back" id="Back" onClick="window.location.reload()" disabled> <input class="button" type=button value="Apply" id="Apply" onClick="" disabled><br><br>
 </body>
 </div>
-
-
-<div id="footer">
-</div>
-
+<div id="footer"></div>
 </div>
 </html>
