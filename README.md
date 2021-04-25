@@ -1,4 +1,2 @@
 # pathologyAssistant
-Assisting PAs through scripts
-
-... currently working on combining all useful scripts into one app.
+Assisting pathology staff with helpful tools built into one scripting app.

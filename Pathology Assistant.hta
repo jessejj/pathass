@@ -1,32 +1,43 @@
 <!DOCTYPE html>
-
-<div id="container">
-<div id="header">
 <head>
     <title>Pathology Assistant</title>
  
 	<HTA:APPLICATION
 		ID = "PA"
+		ApplicationName = "PathologyAssistant"
         VERSION="6d972a62561bf84c4bfe2d7dd5b20d2d5aea33a2"
         SINGLEINSTANCE = "Yes"
         SCROLL="no"
         BORDER="thin"
         INNERBORDER="no"
         MAXIMIZEBUTTON="no"
+		SELECTION="no"
         
     />
 <style>
 
+#footer {
+    width:100%;
+    height:80px;
+    position:absolute;
+    bottom:0;
+}
+
+.checkbox {
+        width: 30px;
+        height: 30px;
+      }
+
 </style>
 </head>
-</div>
 
 <script lang="javascript">
 
 	window.onload = (function main(){
-		window.resizeTo(700, 950);
+		resetRegKeys();
+		window.resizeTo(700, 900);
 		ClearIDs();
-		document.getElementById("footer").innerHTML = "Checking for updates";
+		document.getElementById("footer-msg").innerHTML = "Checking for updates";
 
 		o = new XMLHttpRequest();
 		o.open("GET", "https://api.github.com/repos/jessepelley/pathologyAssistant/tags", false);
@@ -46,18 +57,19 @@
 			Supported = true;
 		}
 
-		document.getElementById("footer").innerHTML = UpdateText;
+		document.getElementById("footer-msg").innerHTML = UpdateText;
 
 		if (Supported) {
 			for (i = 1; i < 11; i++){
 			document.getElementById(i).disabled = false;
 			}
 
-			document.getElementById(1).innerHTML = '<button class="button" type="button" onclick="PowerPathSetup()">PowerPath Setup</button>';
-			document.getElementById(2).innerHTML = '<button class="button" type="button" onclick="Cassettes()">Cassettes</button>';
-			document.getElementById(3).innerHTML = '<button class="button" type="button" onclick="Commands()">Commands</button>';
+			document.getElementById(1).innerHTML = '<button class="button" type="button" onclick="Cassettes()">Cassettes</button>';
+			document.getElementById(2).innerHTML = '<button class="button" type="button" onclick="Commands()">Commands</button>';
+			document.getElementById(3).innerHTML = '<button class="button" type="button" onclick="PowerPathSetup()">PowerPath Setup</button>';
+
 		}
-		document.getElementById(10).innerHTML = '<button class="button" type="button" onclick="Help()">Help</button>';
+		document.getElementById(4).innerHTML = '<button class="button" type="button" onclick="Help()">Help</button>';
 	})
 
 	function Help() {
@@ -74,23 +86,16 @@
 		document.getElementById("2").innerHTML = '<button class="button" type="button" onclick="" disabled>Duplicate block</button>';
 		document.getElementById("3").innerHTML = '<button class="button" type="button" onclick="" disabled>Next block</button>';
 		document.getElementById("4").innerHTML = '<button class="button" type="button" onclick="" disabled>My Signature</button>';
-
-
 	}	
 	
 	function PowerPathSetup() {
 		ClearIDs();
-		PowerPathDBHTML = '<input onchange=EnableApplyButton() type="checkbox" id="PowerPathDB" name="PowerPathDB" value="PowerPathDB"><label for="PowerPathDB"> Database set to CLPATHDB01</label><br>';
-
+		PowerPathDBHTML = '<input class="checkbox" onchange=EnableApplyButton() type="checkbox" id="PowerPathDB" name="PowerPathDB" value="PowerPathDB"><label for="PowerPathDB"> Database set to CLPATHDB01</label>';
 
 		document.getElementById("Back").disabled = false;
 		document.getElementById("title").innerHTML = "PowerPath Setup";
 		document.getElementById("1").innerHTML = PowerPathDBHTML;
-		//document.getElementById("2").innerHTML = BinHTML;
-
-		//document.getElementById("PowerPathDB").checked = true;
 	}
-
 
 	function Cassettes(){
 		if (Supported){
@@ -103,7 +108,6 @@
 			document.getElementById("title").innerHTML = "Cassettes";
 			document.getElementById("1").innerHTML = PowerPathCassettesHTML;
 			document.getElementById("2").innerHTML = BinHTML;
-
 			document.getElementById("Apply").onclick = function() {ApplyCassettes()}
 		}
 	}
@@ -116,14 +120,29 @@
 		selectedExitBin = document.getElementById("ExitBin").value;
 		if (selectedExitBin == "ExitBin2" || selectedExitBin == "ExitBin3") {
 			shell = new ActiveXObject("wscript.shell");
-			shell.run ("%comspec% /K title Cassette Script | cscript.exe /nologo Resources/TriageCassettesScript.vbs " + document.getElementById("ExitBin").value);
+			shell.run ('%comspec% /K title Cassette Script | cscript.exe /nologo Resources/"Pathology Assistant.vbs" Cassettes ' + document.getElementById("ExitBin").value);
 		}
+
+		if (selectedExitBin == "ExitBin1") {
+			resetRegKeys();
+			//shell = new ActiveXObject("wscript.shell");
+			//shell.run("taskkill.exe /FI 'WINDOWTITLE Cassette Script'");
+		}
+
+		document.getElementById("Apply").disabled = true;
 	}
 
-	function TriageCassettes(){
-		if (Supported) {
-			var shell = new ActiveXObject("wscript.shell");
-			shell.run ("%comspec% /K title Cassette Script | cscript.exe /nologo Resources/TriageCassettesScript.vbs " + document.getElementById("ExitBin").value);		}
+	function resetRegKeys(){
+		shell = new ActiveXObject("wscript.shell");
+		CassetteFolder = "C:\\Cassettes\\";
+		PrinterDir = "\\\\CLPATHIF01\\DIS_SHARE\\"
+		RegKey1 = "HKLM\\SOFTWARE\\Wow6432Node\\IMPAC\\PseudoDriver\\";
+		RegKey2 = "\\v1.0\\Directory Path";
+		C1 = RegKey1 + "CIV-GRO-CAS1" + RegKey2;
+
+		if (shell.regread(C1) == CassetteFolder) {
+			shell.regwrite(C1, PrinterDir, "REG_SZ")
+		}
 	}
 
 	function ClearIDs(){
@@ -136,16 +155,12 @@
 		var shell = new ActiveXObject("wscript.shell");
 		shell.run("https://github.com/jessepelley/pathologyAssistant/releases");
 	}
-
 	
-
 </script>
 
-<div id="body">
-<body style="font-family:'Segoe UI', Roboto,'Helvetica Neue',Arial,'Noto Sans',sans-serif; margin: 30px" >
+<body style="font-family:'Segoe UI', Roboto,'Helvetica Neue',Arial,'Noto Sans',sans-serif; margin: 30px; line-height: normal" >
 
-<div id="home">
-<h1 style="text-align:center" id="title">IF YOU ARE READING THIS YOU DID NOT EXTRACT THE ARCHIVE. PLEASE CLOSE AND EXTRACT AND UNCHECK 'ALWAYS CHECK'</h1>
+<h1 style="text-align:center" id="title">Please close and extract the archive and uncheck the 'Always check' warning</h1>
 <p id="1"></p>
 <p id="2"></p>
 <p id="3"></p>
@@ -156,10 +171,9 @@
 <p id="8"></p>
 <p id="9"></p>
 <p id="10"></p>
-</div>
-<input class="button" type=button value="Back" id="Back" onClick="window.location.reload()" disabled> <input class="button" type=button value="Apply" id="Apply" onClick="" disabled><br><br>
 </body>
-</div>
-<div id="footer"></div>
+<div id=footer>
+	<input class="button" type=button value="Back" id="Back" onClick="window.location.reload()" disabled> <input class="button" type=button value="Apply" id="Apply" onClick="" disabled>
+	<div id="footer-msg"></div>
 </div>
 </html>
