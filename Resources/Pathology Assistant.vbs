@@ -66,7 +66,7 @@ Sub Cassettes
                     text = ReadFile.ReadAll
                     ReadFile.close
 
-                    If instr(text, "<STORE>1<>") = 0 Then 
+                    If instr(text, "<DEVCOMMENT>Cassette Labels for Delimited Value type devices.") = 0 Then 
                         Say file.path & " does not appear to be a cassette text file. Ending script..."
                         Exit Do
                     End If
