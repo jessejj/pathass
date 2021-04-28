@@ -76,7 +76,7 @@ Sub Cassettes
                         WriteFile.Write text
                         WriteFile.close
                     
-                    file.move OutputFolder
+                    file.move PrinterDir
                     Say file.name & " sent to printer. " & Files.Count & " remain. Please don't stop script."
                     If CassetteCount = TotalCassettes Then Say "Now safe to stop script."
                 
