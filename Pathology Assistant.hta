@@ -155,6 +155,29 @@
 		var shell = new ActiveXObject("wscript.shell");
 		shell.run("https://github.com/jessepelley/pathologyAssistant/releases");
 	}
+
+	function test(){
+		//runScript("test script", "test")
+		readScript("test script", "test")
+	}
+
+	function runScript(scriptName, script, arg){
+		shell = new ActiveXObject("wscript.shell");
+		blah = shell.exec ('%comspec% /K title ' + scriptName + ' | cscript.exe /nologo Resources/"Pathology Assistant.vbs" ' + script + ' ' + arg);
+		alert(blah.StdOut.ReadAll());
+	}
+
+	function readScript(scriptName, script, arg){
+		shell = new ActiveXObject("wscript.shell");
+		blah = shell.exec ('cscript.exe Resources/"Pathology Assistant.vbs" ' + script + ' ' + arg);
+		document.getElementById(5).innerHTML = "ProcessID: " + blah.ProcessID;
+		//alert(blah.StdOut.ReadLine());
+		//do {
+		//	document.getElementById(6).innerHTML = blah.StdOut.ReadLine();
+		//} while (! blah.Stdout.atEndOfStream);
+		setInterval(function(){ document.getElementById(6).innerHTML = blah.StdOut.ReadLine(); }, 1000);
+		
+	}
 	
 </script>
 
