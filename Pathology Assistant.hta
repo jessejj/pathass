@@ -100,6 +100,7 @@
 	function Cassettes(){
 		if (Supported){
 			ClearIDs();
+			checkRegKeys();
 			CASoptionsHTML = "<option value = ''></option><option value = 'CIV-GRO-CAS1'>CIV-GRO-CAS1</option>";
 			PowerPathCassettesHTML = "PowerPath Auto Print: <select onchange=EnableApplyButton() name = 'CAS' id = 'CAS'>" + CASoptionsHTML + "</select>";
 			BinHTML = "Exit bin: <select onchange=EnableApplyButton() name = 'ExitBin' id = 'ExitBin'> <option value = 'ExitBin1' selected>Bin 1</option><option value = 'ExitBin2'>Bin 2</option><option value = 'ExitBin3'>Bin 3</option></select>";
@@ -142,6 +143,19 @@
 
 		if (shell.regread(C1) == CassetteFolder) {
 			shell.regwrite(C1, PrinterDir, "REG_SZ")
+		}
+	}
+
+	function checkRegKeys(){
+		shell = new ActiveXObject("wscript.shell");
+		CassetteFolder = "C:\\Cassettes\\";
+		PrinterDir = "\\\\CLPATHIF01\\DIS_SHARE\\"
+		RegKey1 = "HKLM\\SOFTWARE\\Wow6432Node\\IMPAC\\PseudoDriver\\";
+		RegKey2 = "\\v1.0\\Directory Path";
+		C1 = RegKey1 + "CIV-GRO-CAS1" + RegKey2;
+
+		if (shell.regread(C1) == CassetteFolder) {
+			EnableApplyButton();
 		}
 	}
 

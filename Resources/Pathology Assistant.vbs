@@ -24,7 +24,7 @@ Sub Cassettes
     Set shell = CreateObject("Wscript.Shell")
 	Dim ThisPC
     ThisPC = shell.ExpandEnvironmentStrings("%COMPUTERNAME%")
-	'ThisPC = "OH182236" 'for testing
+	ThisPC = "OH182236" 'for testing
 
     Dim casArr(0, 3) '2 dimensional array of cassette printers and the PCs that print to it
     casArr(0, 0) = "CIV-GRO-CAS1"
