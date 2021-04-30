@@ -90,7 +90,7 @@
 	
 	function PowerPathSetup() {
 		ClearIDs();
-		PowerPathDBHTML = '<input class="checkbox" onchange=EnableApplyButton() type="checkbox" id="PowerPathDB" name="PowerPathDB" value="PowerPathDB"><label for="PowerPathDB"> Database set to CLPATHDB01</label>';
+		PowerPathDBHTML = '<input class="checkbox" onchange="" type="checkbox" id="PowerPathDB" name="PowerPathDB" value="PowerPathDB"><label for="PowerPathDB"> Set database to CLPATHDB01</label>';
 
 		document.getElementById("Back").disabled = false;
 		document.getElementById("title").innerHTML = "PowerPath Setup";
@@ -100,16 +100,30 @@
 	function Cassettes(){
 		if (Supported){
 			ClearIDs();
+			document.getElementById("Back").disabled = false;
+
 			checkRegKeys();
-			CASoptionsHTML = "<option value = ''></option><option value = 'CIV-GRO-CAS1'>CIV-GRO-CAS1</option>";
+			
+			try {
+				if (checkRegKeysAutoPrint() == "62") {
+				CASoptionsHTML = "<option value = ''></option><option value = 'CIV-GRO-CAS1' selected >CIV-GRO-CAS1</option>";
+				} 
+			}
+
+			catch(err) {
+				CASoptionsHTML = "<option value = ''></option><option value = 'CIV-GRO-CAS1'>CIV-GRO-CAS1</option>";
+			} 
+
+
 			PowerPathCassettesHTML = "PowerPath Auto Print: <select onchange=EnableApplyButton() name = 'CAS' id = 'CAS'>" + CASoptionsHTML + "</select>";
 			BinHTML = "Exit bin: <select onchange=EnableApplyButton() name = 'ExitBin' id = 'ExitBin'> <option value = 'ExitBin1' selected>Bin 1</option><option value = 'ExitBin2'>Bin 2</option><option value = 'ExitBin3'>Bin 3</option></select>";
 
-			document.getElementById("Back").disabled = false;
+			
 			document.getElementById("title").innerHTML = "Cassettes";
 			document.getElementById("1").innerHTML = PowerPathCassettesHTML;
 			document.getElementById("2").innerHTML = BinHTML;
 			document.getElementById("Apply").onclick = function() {ApplyCassettes()}
+
 		}
 	}
 
@@ -122,12 +136,12 @@
 		if (selectedExitBin == "ExitBin2" || selectedExitBin == "ExitBin3") {
 			shell = new ActiveXObject("wscript.shell");
 			shell.run ('%comspec% /K title Cassette Script | cscript.exe /nologo Resources/"Pathology Assistant.vbs" Cassettes ' + document.getElementById("ExitBin").value);
+			//myscript = shell.exec ('cscript.exe /nologo Resources/"Pathology Assistant.vbs" Cassettes ' + document.getElementById("ExitBin").value);
 		}
 
 		if (selectedExitBin == "ExitBin1") {
 			resetRegKeys();
-			//shell = new ActiveXObject("wscript.shell");
-			//shell.run("taskkill.exe /FI 'WINDOWTITLE Cassette Script'");
+			//alert(myscript.Terminate);
 		}
 
 		document.getElementById("Apply").disabled = true;
@@ -157,6 +171,19 @@
 		if (shell.regread(C1) == CassetteFolder) {
 			EnableApplyButton();
 		}
+	}
+
+	function checkRegKeysAutoPrint(){
+		shell = new ActiveXObject("wscript.shell");
+		autoPrint = "HKCU\\Software\\Tamtron\\PowerPath Client\\Auto Print Cassette"
+		autoPrintPrinter = "HKCU\\Software\\Tamtron\\PowerPath Client\\Auto Print Cassette Device ID"
+
+		if (shell.regread(autoPrint) == "Yes") {
+			return shell.regread(autoPrintPrinter);
+		}
+
+
+
 	}
 
 	function ClearIDs(){
@@ -189,9 +216,10 @@
 		//do {
 		//	document.getElementById(6).innerHTML = blah.StdOut.ReadLine();
 		//} while (! blah.Stdout.atEndOfStream);
-		setInterval(function(){ document.getElementById(6).innerHTML = blah.StdOut.ReadLine(); }, 1000);
-		
+		setInterval(function(){ document.getElementById(6).innerHTML = blah.StdOut.ReadLine(); }, 1000);	
 	}
+
+
 	
 </script>
 
