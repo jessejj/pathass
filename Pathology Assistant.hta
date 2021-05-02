@@ -25,17 +25,11 @@ td {padding: 10px;}
     bottom:0;
 }
 
-.checkbox {
-        width: 30px;
-        height: 30px;
-      }
-
 </style>
 </head>
 
 <script lang="javascript">
 	window.onload = (function main(){
-		//resetRegKeys()
 		window.resizeTo(700,900)
 		ClearIDs()
 		document.getElementById("footer-msg").innerHTML = "Checking for updates";
@@ -51,7 +45,7 @@ td {padding: 10px;}
 		document.getElementById("title").innerHTML = "Pathology Assistant App";
 
 		if (json.indexOf(PA.version) == -1) {
-			UpdateText = "<input type='button' onclick='openLink()' value='Update'><br><i>Unsupported Version</i>";
+			UpdateText = "<i>Unsupported Version</i> <input type='button' onclick='openLink()' value='Update'>";
 			Supported = false;
 		} else {
 			UpdateText = "Supported Version";
@@ -73,10 +67,14 @@ td {padding: 10px;}
 			for (i = 0; i < buttons.length; i++){
 			document.getElementById(i).innerHTML = buttons[i]
 			}
+
+			if (oneClickEligible()) {
+			document.getElementById("oneclickbutton").disabled = false
+			}
 		}
 
-		if (oneClickEligible()) {
-			document.getElementById("oneclickbutton").disabled = false
+		if (resetRegKeys("checkonly")) {
+			document.getElementById("r0").innerHTML = '<button class="button" type="button" onclick="resetRegKeys()" title="Reset back to Bin 1" style="float: right;">Reset Cassettes</button>'
 		}
 
 		dictionary = {
@@ -112,10 +110,19 @@ td {padding: 10px;}
 		ClearIDs();
 		document.getElementById("Back").disabled = false;
 		document.getElementById("title").innerHTML = "Commands";
-		document.getElementById("1").innerHTML = '<button class="button" type="button" onclick="" disabled>Delete block</button>';
-		document.getElementById("2").innerHTML = '<button class="button" type="button" onclick="" disabled>Duplicate block</button>';
-		document.getElementById("3").innerHTML = '<button class="button" type="button" onclick="" disabled>Next block</button>';
-		document.getElementById("4").innerHTML = '<button class="button" type="button" onclick="" disabled>My Signature</button>';
+
+		commandButtons = [
+			'<button class="button" type="button" onclick="" disabled>Delete block</button>',
+			'<button class="button" type="button" onclick="" disabled>Duplicate block</button>',
+			'<button class="button" type="button" onclick="" disabled>Next block</button>',
+			'<button class="button" type="button" onclick="" disabled>My Signature</button>',
+			'<button class="button" type="button" onclick="" title="Toggle priority for PowerPath orders" disabled>Make All Orders Rush</button>'
+		];
+
+		var i
+		for (i = 0; i < commandButtons.length; i++){
+		document.getElementById(i).innerHTML = commandButtons[i]
+		}
 	}	
 	
 	function Cassettes(){
@@ -123,7 +130,7 @@ td {padding: 10px;}
 			ClearIDs();
 			document.getElementById("Back").disabled = false;
 
-			checkRegKeys();
+			if (resetRegKeys("checkonly")){EnableApplyButton()}
 			CASoptionsHTML = "<option value = ''></option><option value = 'CIV-GRO-CAS1'>CIV-GRO-CAS1</option>";
 
 			try {
@@ -135,11 +142,9 @@ td {padding: 10px;}
 			catch(err) {
 			} 
 
-
-			PowerPathCassettesHTML = "PowerPath Auto Print: <select onchange=EnableApplyButton() name = 'CAS' id = 'CAS'>" + CASoptionsHTML + "</select>";
+			PowerPathCassettesHTML = "Cassette Printer: <select onchange=EnableApplyButton() name = 'CAS' id = 'CAS'>" + CASoptionsHTML + "</select>";
 			BinHTML = "Exit bin: <select onchange=EnableApplyButton() name = 'ExitBin' id = 'ExitBin'> <option value = 'ExitBin1' selected>Bin 1</option><option value = 'ExitBin2'>Bin 2</option><option value = 'ExitBin3'>Bin 3</option></select>";
 
-			
 			document.getElementById("title").innerHTML = "Cassettes";
 			document.getElementById("1").innerHTML = PowerPathCassettesHTML;
 			document.getElementById("2").innerHTML = BinHTML;
@@ -168,7 +173,7 @@ td {padding: 10px;}
 		document.getElementById("Apply").disabled = true;
 	}
 
-	function resetRegKeys(){
+	function resetRegKeys(checkonly){
 		shell = new ActiveXObject("wscript.shell");
 		CassetteFolder = "C:\\Cassettes\\";
 		PrinterDir = "\\\\CLPATHIF01\\DIS_SHARE\\"
@@ -176,22 +181,12 @@ td {padding: 10px;}
 		RegKey2 = "\\v1.0\\Directory Path";
 		C1 = RegKey1 + "CIV-GRO-CAS1" + RegKey2;
 
-		if (shell.regread(C1) == CassetteFolder) {
-			shell.regwrite(C1, PrinterDir, "REG_SZ")
+		if (regread(C1) == CassetteFolder) {
+			if (checkonly == "checkonly") {return true}
+			regwrite(C1, PrinterDir)
+			document.getElementById("r0").innerHTML = '<div id="r0"></div>'
 		}
-	}
 
-	function checkRegKeys(){
-		shell = new ActiveXObject("wscript.shell");
-		CassetteFolder = "C:\\Cassettes\\";
-		PrinterDir = "\\\\CLPATHIF01\\DIS_SHARE\\"
-		RegKey1 = "HKLM\\SOFTWARE\\Wow6432Node\\IMPAC\\PseudoDriver\\";
-		RegKey2 = "\\v1.0\\Directory Path";
-		C1 = RegKey1 + "CIV-GRO-CAS1" + RegKey2;
-
-		if (shell.regread(C1) == CassetteFolder) {
-			EnableApplyButton();
-		}
 	}
 
 	function checkRegKeysAutoPrint(){
@@ -199,7 +194,7 @@ td {padding: 10px;}
 		autoPrint = "HKCU\\Software\\Tamtron\\PowerPath Client\\Auto Print Cassette"
 		autoPrintPrinter = "HKCU\\Software\\Tamtron\\PowerPath Client\\Auto Print Cassette Device ID"
 
-		return shell.regread(autoPrintPrinter);
+		return regread(autoPrintPrinter)
 	}
 
 	function ClearIDs(){
