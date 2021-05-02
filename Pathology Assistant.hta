@@ -16,6 +16,8 @@
     />
 <style>
 
+td {padding: 10px;}
+
 #footer {
     width:100%;
     height:80px;
@@ -32,11 +34,10 @@
 </head>
 
 <script lang="javascript">
-
 	window.onload = (function main(){
-		//resetRegKeys();
-		window.resizeTo(700, 900);
-		ClearIDs();
+		//resetRegKeys()
+		window.resizeTo(700,900)
+		ClearIDs()
 		document.getElementById("footer-msg").innerHTML = "Checking for updates";
 
 		o = new XMLHttpRequest();
@@ -59,17 +60,46 @@
 
 		document.getElementById("footer-msg").innerHTML = UpdateText;
 
+		buttons = [
+			'<button class="button" type="button" onclick="Cassettes()" title="Scripts for printing cassettes">Cassettes</button>',
+			'<button class="button" type="button" onclick="Commands()">Commands</button>',
+			'<button class="button" type="button" onclick="oneClickSetup()" id="oneclickbutton" title="Apply all initial setup tasks for this PC" disabled >One Click Setup</button>',
+			'<button class="button" type="button" onclick="PowerPathSetup()">PowerPath Setup</button>',
+			'<button class="button" type="button" onclick="Help()" title="Email Jesse">Help</button>'
+		];
+
 		if (Supported) {
-			for (i = 1; i < 11; i++){
-			document.getElementById(i).disabled = false;
+			var i
+			for (i = 0; i < buttons.length; i++){
+			document.getElementById(i).innerHTML = buttons[i]
 			}
-
-			document.getElementById(1).innerHTML = '<button class="button" type="button" onclick="Cassettes()">Cassettes</button>';
-			document.getElementById(2).innerHTML = '<button class="button" type="button" onclick="Commands()">Commands</button>';
-			document.getElementById(3).innerHTML = '<button class="button" type="button" onclick="PowerPathSetup()">PowerPath Setup</button>';
-
 		}
-		document.getElementById(4).innerHTML = '<button class="button" type="button" onclick="Help()">Help</button>';
+
+		if (oneClickEligible()) {
+			document.getElementById("oneclickbutton").disabled = false
+		}
+
+		dictionary = {
+			server:0,
+			database:1,
+			specimenlabeldevicename:2,
+			specimenlabelautoprint:3,
+			documentlabeldevicename:4,
+			documentlabelautoprint:5,
+			cassettedeviceID:6,
+			cassetteautoprint:7
+		}
+
+		dictionaryArr = [
+			"server",
+			"database",
+			"specimenlabeldevicename",
+			"specimenlabelautoprint",
+			"documentlabeldevicename",
+			"documentlabelautoprint",
+			"cassettedeviceID",
+			"cassetteautoprint"
+		];
 	})
 
 	function Help() {
@@ -88,22 +118,14 @@
 		document.getElementById("4").innerHTML = '<button class="button" type="button" onclick="" disabled>My Signature</button>';
 	}	
 	
-	function PowerPathSetup() {
-		ClearIDs();
-		PowerPathDBHTML = '<input class="checkbox" onchange="" type="checkbox" id="PowerPathDB" name="PowerPathDB" value="PowerPathDB"><label for="PowerPathDB"> Set database to CLPATHDB01</label>';
-
-		document.getElementById("Back").disabled = false;
-		document.getElementById("title").innerHTML = "PowerPath Setup";
-		document.getElementById("1").innerHTML = PowerPathDBHTML;
-	}
-
 	function Cassettes(){
 		if (Supported){
 			ClearIDs();
 			document.getElementById("Back").disabled = false;
 
 			checkRegKeys();
-			
+			CASoptionsHTML = "<option value = ''></option><option value = 'CIV-GRO-CAS1'>CIV-GRO-CAS1</option>";
+
 			try {
 				if (checkRegKeysAutoPrint() == "62") {
 				CASoptionsHTML = "<option value = ''></option><option value = 'CIV-GRO-CAS1' selected >CIV-GRO-CAS1</option>";
@@ -111,7 +133,6 @@
 			}
 
 			catch(err) {
-				CASoptionsHTML = "<option value = ''></option><option value = 'CIV-GRO-CAS1'>CIV-GRO-CAS1</option>";
 			} 
 
 
@@ -178,16 +199,12 @@
 		autoPrint = "HKCU\\Software\\Tamtron\\PowerPath Client\\Auto Print Cassette"
 		autoPrintPrinter = "HKCU\\Software\\Tamtron\\PowerPath Client\\Auto Print Cassette Device ID"
 
-		if (shell.regread(autoPrint) == "Yes") {
-			return shell.regread(autoPrintPrinter);
-		}
-
-
-
+		return shell.regread(autoPrintPrinter);
 	}
 
 	function ClearIDs(){
-		for (i = 1; i < 11; i++){
+		var i
+		for (i = 0; i < 11; i++){
 			document.getElementById(i).innerHTML = "&nbsp;";
 		}
 	}
@@ -219,22 +236,142 @@
 		setInterval(function(){ document.getElementById(6).innerHTML = blah.StdOut.ReadLine(); }, 1000);	
 	}
 
+	function oneClickEligible() {
+		var registeredList = [
+			"OH163934", //civic left handed bench
+			"OH181525", //civic right handed bench
+			"OH182236", //civic wide bench 
+			"OH182644"]; //civic labelase
+		shell = new ActiveXObject("Wscript.Shell")
+		ThisPC = shell.ExpandEnvironmentStrings("%COMPUTERNAME%")
+		//ThisPC = "OH163934" //for testing
+		var i
+		for (i = 0; i < registeredList.length; i++) {
+			if (ThisPC == registeredList[i]) {return true}
+		}
+
+		return false;
+	}
+
+	function oneClickSetup(){
+		ClearIDs
+		register()
+	}
+
+	function register(key, write) {
+		keys = new Array
+		values = new Array 
+
+		keys[0]="HKCU/Software/Tamtron/PowerPath Client/Login Info/Server"
+		keys[1]="HKCU/Software/Tamtron/PowerPath Client/Login Info/Database"
+		keys[2]="HKCU/Software/Tamtron/PowerPath Client/Auto Print Specimen Label DIS Device Name"
+		keys[3]="HKCU/Software/Tamtron/PowerPath Client/Auto Print Specimen Label"
+		keys[4]="HKCU/Software/Tamtron/PowerPath Client/Auto Print Document Label DIS Device Name"
+		keys[5]="HKCU/Software/Tamtron/PowerPath Client/Auto Print Document Label"
+		keys[6]="HKCU/Software/Tamtron/PowerPath Client/Auto Print Cassette Device ID"
+		keys[7]="HKCU/Software/Tamtron/PowerPath Client/Auto Print Cassette"
+		
+		values[0]="CLPATHDB01"
+		values[1]="PowerPath"
+		values[2]="CIV-ADM-APISCOE1"
+		values[3]="Yes"
+		values[4]="CIV-ADM-APISCOE1"
+		values[5]="Yes"
+		values[6]="62"
+		values[7]="Yes"
+
+		if (arguments.length == 1) {
+			if (regread(keys[dictionary[key]]) == values[dictionary[key]]){ //dictionary is a (global) object array, the string 'key' returns corresponding integer
+				return true
+			} else {
+				return false
+			}
+		}
+
+		if (arguments.length == 0) {
+			var i
+			for (i = 0; i < keys.length; i++) {
+				
+				if (regread(keys[i]) != values[i]) {
+					regwrite(keys[i],values[i])
+				}
+			}
+		}
+
+		if (arguments.length == 2) {
+			document.getElementById("r" + [dictionary[key]]).disabled = true //dictionary is an object array, string 'key' returns corresponding integer
+			regwrite(keys[dictionary[key]],values[dictionary[key]])
+		}
+
+	}
+
+	function regread(key) {
+		key = key.replace(/\//g,"\\")
+		shell = new ActiveXObject("wscript.shell")
+		try {
+			return shell.regread(key)
+		}
+
+		catch(err) {
+			return "key doesn't exist"
+		}
+	}
+
+	function regwrite(key, value) {
+		key = key.replace(/\//g,"\\")
+		shell.regwrite(key, value)
+	}
+
+	function PowerPathSetup() {
+		ClearIDs
+		document.getElementById("Back").disabled = false
+		document.getElementById("title").innerHTML = "PowerPath Setup";
+
+		setuplines = [
+			"Set server to CLPATHDB01",
+			"Set database to PowerPath",
+			"Set specimen label printer",
+			"Auto print specimen labels",
+			"Set document label printer",
+			"Auto print document labels",
+			"Set cassette printer",
+			"Auto print cassettes"
+		];
+		var i
+		for (i = 0; i < setuplines.length; i++){
+			document.getElementById(i).innerHTML = setuplines[i]
+			buttonfunction = "register('" + dictionaryArr[i] + "','write')"
+			document.getElementById("r" + i).innerHTML = '<input type="button" id="button' + i + '" value="Apply" onclick="' + buttonfunction +'" style="float: right;" disabled>'
+		}
+
+		var i
+		for (i = 0; i < dictionaryArr.length; i++) {
+			if (register(dictionaryArr[i]) == false) {
+				if (i < 2 | oneClickEligible()){
+				document.getElementById("button"+i).disabled = false
+				}
+			}
+		}
+	}
 
 	
 </script>
 
 <body style="font-family:'Segoe UI', Roboto,'Helvetica Neue',Arial,'Noto Sans',sans-serif; margin: 30px; line-height: normal" >
-
-<h1 style="text-align:center" id="title">Please extract the archive and uncheck the 'Always ask before opening this file' box before running.</h1><p id="1"></p>
-<p id="2"></p>
-<p id="3"></p>
-<p id="4"></p>
-<p id="5"></p>
-<p id="6"></p>
-<p id="7"></p>
-<p id="8"></p>
-<p id="9"></p>
-<p id="10"></p>
+<h1 style="text-align:center" id="title">Please extract the archive and uncheck the 'Always ask before opening this file' box before running.</h1>
+<table style="width: 100%;">
+	<tr><td><p id="0"></p></td><td><div id="r0"></div></td></tr>
+	<tr><td><p id="1"></p></td><td><div id="r1"></div></td></tr>
+	<tr><td><p id="2"></p></td><td><div id="r2"></div></td></tr>
+	<tr><td><p id="3"></p></td><td><div id="r3"></div></td></tr>
+	<tr><td><p id="4"></p></td><td><div id="r4"></div></td></tr>
+	<tr><td><p id="5"></p></td><td><div id="r5"></div></td></tr>
+	<tr><td><p id="6"></p></td><td><div id="r6"></div></td></tr>
+	<tr><td><p id="7"></p></td><td><div id="r7"></div></td></tr>
+	<tr><td><p id="8"></p></td><td><div id="r8"></div></td></tr>
+	<tr><td><p id="9"></p></td><td><div id="r9"></div></td></tr>
+	<tr><td><p id="10"></p></td><td><div id="r10"></div></td></tr>
+</table>
 </body>
 <div id=footer>
 	<input class="button" type=button value="Back" id="Back" onClick="window.location.reload()" disabled> <input class="button" type=button value="Apply" id="Apply" onClick="" disabled>
