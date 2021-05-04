@@ -31,7 +31,7 @@ Sub Cassettes
 	casArr(0, 1) = "OH182236"	'wide bench
 	casArr(0, 2) = "OH181525"	'right handed bench
 	casArr(0, 3) = "OH163934"	'left handed bench
-	casArr(0, 4) = "OH182644"
+	casArr(0, 4) = "OH182644"	'labelase
 
 	For Index = 0 to UBound(casArr, 2)
 		If ThisPC = casArr(0, Index) Then ChangeEnabled = True
@@ -48,10 +48,10 @@ Sub Cassettes
 	Set FSO = CreateObject("Scripting.FileSystemObject")
 	If Not FSO.FolderExists(CassetteDir) Then FSO.CreateFolder(CassetteDir)
 
-	'Say shell.RegRead("HKLM\SOFTWARE\Wow6432Node\IMPAC\PseudoDriver\CIV-GRO-CAS1\v1.0\Directory Path")
 	shell.RegWrite "HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\IMPAC\PseudoDriver\CIV-GRO-CAS1\v1.0\Directory Path", CassetteDir, "REG_SZ" 
 
 	Do
+		If Not shell.RegRead("HKLM\SOFTWARE\Wow6432Node\IMPAC\PseudoDriver\CIV-GRO-CAS1\v1.0\Directory Path") = CassetteDir Then Exit Do
 		Set Folder = FSO.GetFolder(CassetteDir)
 		Set Files = Folder.Files
 		If Files.Count = 0 Then
@@ -78,7 +78,7 @@ Sub Cassettes
 						WriteFile.close
 					
 					file.move PrinterDir
-					Say file.name & " sent to printer. " & Files.Count & " remain. Please don't stop script."
+					Say "(" & CassetteCount & "/" & Files.Count & ") cassettes sent to the printer. Please don't stop script."
 					If CassetteCount = TotalCassettes Then Say "Now safe to stop script."
 				
 				If LargeBatch Then
@@ -90,7 +90,8 @@ Sub Cassettes
 		End If
 	Loop
 
-	shell.RegWrite "HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\IMPAC\PseudoDriver\CIV-GRO-CAS1\v1.0\Directory Path", PrinterDir, "REG_SZ"
+	Say "Ending script..."
+	Wait 1
 		
 	Set FSO = Nothing
 	Set shell = Nothing
