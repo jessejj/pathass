@@ -113,17 +113,26 @@ td {padding: 10px;}
 
 		commandButtons = [
 			'<button class="button" type="button" onclick="" disabled>Delete block</button>',
-			'<button class="button" type="button" onclick="" disabled>Duplicate block</button>',
+			'<button class="button" type="button" onclick="DuplicateBlock()" >Duplicate block</button>',
 			'<button class="button" type="button" onclick="" disabled>Next block</button>',
 			'<button class="button" type="button" onclick="" disabled>My Signature</button>',
-			'<button class="button" type="button" onclick="" title="Toggle priority for PowerPath orders" disabled>Make All Orders Rush</button>'
+			'<button class="button" type="button" onclick="" title="Toggle priority for PowerPath orders" disabled>Make All Orders Rush</button>',
+			'<button class="button" type="button" onclick="CaseFinder()" title="">Case Finder</button>'
 		];
 
 		var i
 		for (i = 0; i < commandButtons.length; i++){
 		document.getElementById(i).innerHTML = commandButtons[i]
 		}
-	}	
+	}
+
+	function CaseFinder() {
+		runScript("CaseFinder", "CaseFinder")
+	}
+
+	function DuplicateBlock() {
+		runScript("DuplicateBlock", "DuplicateBlock")
+	}
 	
 	function Cassettes(){
 		if (Supported){
@@ -216,8 +225,9 @@ td {padding: 10px;}
 
 	function runScript(scriptName, script, arg){
 		shell = new ActiveXObject("wscript.shell");
-		blah = shell.exec ('%comspec% /K title ' + scriptName + ' | cscript.exe /nologo Resources/"Pathology Assistant.vbs" ' + script + ' ' + arg);
-		alert(blah.StdOut.ReadAll());
+		//blah = shell.exec ('%comspec% /K title ' + scriptName + ' | cscript.exe /nologo Resources/"Pathology Assistant.vbs" ' + script + ' ' + arg);
+		blah = shell.run ('%comspec% /K title ' + scriptName + ' | cscript.exe /nologo Resources/"Pathology Assistant.vbs" ' + script + ' ' + arg);
+		//alert(blah.StdOut.ReadAll());
 	}
 
 	function readScript(scriptName, script, arg){
