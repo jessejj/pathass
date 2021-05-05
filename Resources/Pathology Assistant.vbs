@@ -1,6 +1,83 @@
 Say "Starting script..."
 If WScript.Arguments(0) = "Cassettes" Then Cassettes
+If WScript.Arguments(0) = "CaseFinder" Then CaseFinder
+If WScript.Arguments(0) = "DuplicateBlock" Then DuplicateBlock
 WScript.Quit
+
+Sub CaseFinder
+	Set shell = CreateObject("Wscript.Shell")
+	If Not GetPowerPath() Then Exit Sub
+	
+	shell.SendKeys("^{F3}"), True
+
+	For Index = 0 to 5
+		Wait 1
+		If shell.AppActivate("Case Finder") Then Exit For
+	Next
+
+	If shell.AppActivate("Case Finder") Then
+		shell.SendKeys"%p", True
+		'Clipboard "bob"
+		shell.SendKeys"PATIENTS NAME", True
+		shell.SendKeys "{tab 9}", True
+		shell.SendKeys "2020-01-01", True
+	End If
+
+	Set shell = Nothing
+End Sub
+
+Sub DuplicateBlock
+	Set shell = CreateObject("Wscript.Shell")
+
+	If GetCaseWindow() Then
+		shell.SendKeys "%a", True
+		shell.SendKeys "^3", True
+		shell.SendKeys "%m", True
+		shell.SendKeys "{tab}{home}", True
+		shell.SendKeys "sp{down}^u~%y",True
+
+	End If
+
+	Set shell = Nothing
+End Sub
+
+Function GetCaseWindow()
+If Not GetPowerPath() Then Exit Function
+	Set shell = CreateObject("Wscript.Shell")
+
+	For Index = 0 to 3
+		If shell.AppActivate("PowerPath Client (Test System) - [Case Information - " ) Then
+			GetCaseWindow = True
+			Exit For
+		Else
+			shell.SendKeys"^{F6}", True
+		End If
+		Wait 1
+	Next
+	Set shell = Nothing
+End Function
+
+Function GetPowerPath()
+	Set shell = CreateObject("Wscript.Shell")
+	If shell.AppActivate("PowerPath Client (Test System) - ") Then
+		Maximized = True
+	End If
+
+	If shell.AppActivate("PowerPath Client (Test System)") Then
+		If Not Maximized Then shell.SendKeys"%-x", True
+		GetPowerPath = True
+	Else
+		msgbox "Can't find PowerPath Client. Is it running?"
+	End If
+	Set shell = Nothing
+End Function
+
+Function Clipboard(text)
+	Set objHTML = CreateObject("htmlfile")
+	'Clipboard = objHTML.ParentWindow.ClipboardData.GetData("text")
+	objHTML.ParentWindow.ClipboardData.SetData "text", text
+	set objHTML = Nothing
+End Function
 
 Function Say(message)
 	On Error Resume Next
