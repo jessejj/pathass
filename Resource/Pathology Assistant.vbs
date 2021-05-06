@@ -1,7 +1,7 @@
 Say "Starting script..."
 script = WScript.Arguments(0)
 
-'PPTesting = "(Test System)"
+'PPTesting = "Client (Test System)"
 
 If script = "Cassettes" Then Cassettes
 If script = "CaseFinder" Then CaseFinder
@@ -50,7 +50,7 @@ If Not GetPowerPath() Then Exit Function
 	Set shell = CreateObject("Wscript.Shell")
 
 	For Index = 0 to 3
-								If shell.AppActivate("PowerPath Client " & PPTesting & " - [Case Information - " ) Then
+								If shell.AppActivate("PowerPath " & PPTesting &" - [Case Information - " ) Then
 			GetCaseWindow = True
 			Exit For
 		Else
@@ -63,11 +63,11 @@ End Function
 
 Function GetPowerPath()
 	Set shell = CreateObject("Wscript.Shell")
-	If shell.AppActivate("PowerPath Client " & PPTesting & " - ") Then
+	If shell.AppActivate("PowerPath " & PPTesting &" - ") Then
 		Maximized = True
 	End If
 
-	If shell.AppActivate("PowerPath Client " & PPTesting) Then
+	If shell.AppActivate("PowerPath " & PPTesting) Then
 		If Not Maximized Then shell.SendKeys"%-x", True
 		GetPowerPath = True
 	Else
