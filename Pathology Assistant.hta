@@ -229,12 +229,12 @@ td {padding: 10px;}
 
 	function runScript(scriptName, script, arg){
 		shell = new ActiveXObject("wscript.shell");
-		shell.run ('%comspec% /C title ' + scriptName + ' | cscript.exe /nologo Resources/"Pathology Assistant.vbs" ' + script + ' ' + arg, 7);
+		shell.run ('%comspec% /C title ' + scriptName + ' | cscript.exe /nologo Resource/"Pathology Assistant.vbs" ' + script + ' ' + arg, 7);
 	}
 
 	function readScript(scriptName, script, arg){
 		shell = new ActiveXObject("wscript.shell");
-		blah = shell.exec ('wscript cscript Resources/"Pathology Assistant.vbs"  ' + script + ' ' + arg);
+		blah = shell.exec ('wscript cscript Resource/"Pathology Assistant.vbs"  ' + script + ' ' + arg);
 		document.getElementById(5).innerHTML = "ProcessID: " + blah.ProcessID;
 		//alert(blah.StdOut.ReadLine());
 		//do {
