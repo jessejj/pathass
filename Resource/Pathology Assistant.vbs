@@ -67,7 +67,7 @@ Function GetPowerPath()
 		Maximized = True
 	End If
 
-	If shell.AppActivate("PowerPath Client " & PPTesting & ") Then
+	If shell.AppActivate("PowerPath Client " & PPTesting) Then
 		If Not Maximized Then shell.SendKeys"%-x", True
 		GetPowerPath = True
 	Else
