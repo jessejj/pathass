@@ -59,7 +59,7 @@ td {padding: 10px;}
 			'<button class="button" type="button" onclick="Commands()">Commands</button>',
 			'<button class="button" type="button" onclick="oneClickSetup()" id="oneclickbutton" title="Apply all initial setup tasks for this PC" disabled >One Click Setup</button>',
 			'<button class="button" type="button" onclick="PowerPathSetup()">PowerPath Setup</button>',
-			'<button class="button" type="button" onclick="Help()" title="Email Jesse">Help</button>'
+			'<button class="button" type="button" onclick="Support()" title="Email Jesse">Email Support</button>'
 		];
 
 		if (Supported) {
@@ -74,7 +74,7 @@ td {padding: 10px;}
 		}
 
 		if (resetRegKeys("checkonly")) {
-			document.getElementById("r0").innerHTML = '<button class="button" type="button" onclick="resetRegKeys()" title="Reset back to Bin 1" style="float: right;">Reset Cassettes</button>'
+			EnableResetButton()
 		}
 
 		dictionary = {
@@ -100,10 +100,12 @@ td {padding: 10px;}
 		];
 	})
 
-	function Help() {
-		helpURL = "https://outlook.office.com/mail/deeplink/compose?to=jpelley@eorla.ca&subject=Pathology%20Assistant%20App&body=%0A%0A%0A%0A%0A%0A%0A%0A%0A%0AApp%20Version%20";
+	function Support() {
+		supportURL = "https://outlook.office.com/mail/deeplink/compose?"
+		supportURL = supportURL + "to=jpelley@eorla.ca&subject=Pathology%20Assistant%20App&body=%0A%0A%0A%0A%0A%0A%0A%0A%0A%0AApp%20Version%20"+ PA.version
 		var shell = new ActiveXObject("wscript.shell");
-		shell.run(helpURL + PA.version);
+		alert(supportURL)
+		shell.run(supportURL);
 	}		
 	
 	function Commands() {
@@ -127,11 +129,11 @@ td {padding: 10px;}
 	}
 
 	function CaseFinder() {
-		runScript("CaseFinder", "CaseFinder")
+		runScript("Case Finder", "CaseFinder")
 	}
 
 	function DuplicateBlock() {
-		runScript("DuplicateBlock", "DuplicateBlock")
+		runScript("Duplicate Block", "DuplicateBlock")
 	}
 	
 	function Cassettes(){
@@ -155,8 +157,8 @@ td {padding: 10px;}
 			BinHTML = "Exit bin: <select onchange=EnableApplyButton() name = 'ExitBin' id = 'ExitBin'> <option value = 'ExitBin1' selected>Bin 1</option><option value = 'ExitBin2'>Bin 2</option><option value = 'ExitBin3'>Bin 3</option></select>";
 
 			document.getElementById("title").innerHTML = "Cassettes";
+			document.getElementById("0").innerHTML = BinHTML;
 			document.getElementById("1").innerHTML = PowerPathCassettesHTML;
-			document.getElementById("2").innerHTML = BinHTML;
 			document.getElementById("Apply").onclick = function() {ApplyCassettes()}
 
 		}
@@ -166,18 +168,25 @@ td {padding: 10px;}
 		document.getElementById("Apply").disabled = false;
 	}
 
+	function EnableResetButton(){
+		document.getElementById("r0").innerHTML = '<button class="button" type="button" onclick="resetRegKeys()" title="Reset back to Bin 1" style="float: right;">Reset to Bin 1</button>'
+	}
+
 	function ApplyCassettes(){
 		selectedExitBin = document.getElementById("ExitBin").value;
-		if (selectedExitBin == "ExitBin2" || selectedExitBin == "ExitBin3") {
-			shell = new ActiveXObject("wscript.shell");
-			shell.run ('%comspec% /K title Cassette Script | cscript.exe /nologo Resources/"Pathology Assistant.vbs" Cassettes ' + document.getElementById("ExitBin").value);
-			//myscript = shell.exec ('cscript.exe /nologo Resources/"Pathology Assistant.vbs" Cassettes ' + document.getElementById("ExitBin").value);
+		if (selectedExitBin == "ExitBin2") {
+			runScript("Printing to Bin 2", "Cassettes", selectedExitBin)
+		}		
+		
+		if (selectedExitBin == "ExitBin3") {
+			runScript("Printing to Bin 3", "Cassettes", selectedExitBin)
 		}
 
 		if (selectedExitBin == "ExitBin1") {
-			resetRegKeys();
-			//alert(myscript.Terminate);
-		}
+			resetRegKeys()
+		} else {
+			EnableResetButton()
+		}	
 
 		document.getElementById("Apply").disabled = true;
 	}
@@ -218,21 +227,14 @@ td {padding: 10px;}
 		shell.run("https://github.com/jessepelley/pathologyAssistant/releases");
 	}
 
-	function test(){
-		//runScript("test script", "test")
-		readScript("test script", "test")
-	}
-
 	function runScript(scriptName, script, arg){
 		shell = new ActiveXObject("wscript.shell");
-		//blah = shell.exec ('%comspec% /K title ' + scriptName + ' | cscript.exe /nologo Resources/"Pathology Assistant.vbs" ' + script + ' ' + arg);
-		blah = shell.run ('%comspec% /K title ' + scriptName + ' | cscript.exe /nologo Resources/"Pathology Assistant.vbs" ' + script + ' ' + arg);
-		//alert(blah.StdOut.ReadAll());
+		shell.run ('%comspec% /C title ' + scriptName + ' | cscript.exe /nologo Resources/"Pathology Assistant.vbs" ' + script + ' ' + arg, 7);
 	}
 
 	function readScript(scriptName, script, arg){
 		shell = new ActiveXObject("wscript.shell");
-		blah = shell.exec ('cscript.exe Resources/"Pathology Assistant.vbs" ' + script + ' ' + arg);
+		blah = shell.exec ('wscript cscript Resources/"Pathology Assistant.vbs"  ' + script + ' ' + arg);
 		document.getElementById(5).innerHTML = "ProcessID: " + blah.ProcessID;
 		//alert(blah.StdOut.ReadLine());
 		//do {

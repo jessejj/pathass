@@ -1,7 +1,9 @@
 Say "Starting script..."
-If WScript.Arguments(0) = "Cassettes" Then Cassettes
-If WScript.Arguments(0) = "CaseFinder" Then CaseFinder
-If WScript.Arguments(0) = "DuplicateBlock" Then DuplicateBlock
+script = WScript.Arguments(0)
+
+If script = "Cassettes" Then Cassettes
+If script = "CaseFinder" Then CaseFinder
+If script = "DuplicateBlock" Then DuplicateBlock
 WScript.Quit
 
 Sub CaseFinder
@@ -116,6 +118,7 @@ Sub Cassettes
 
 	If Not ChangeEnabled Then 
 		Say "This script cannot change the cassette exit bin for this PC"
+		Wait 3
 		WScript.Quit
 	End If
 
@@ -155,7 +158,7 @@ Sub Cassettes
 						WriteFile.close
 					
 					file.move PrinterDir
-					Say "(" & CassetteCount & "/" & Files.Count & ") cassettes sent to the printer. Please don't stop script."
+					Say "(" & CassetteCount & "/" & TotalCassettes & ") cassettes sent to the printer."
 					If CassetteCount = TotalCassettes Then Say "Now safe to stop script."
 				
 				If LargeBatch Then
@@ -166,9 +169,6 @@ Sub Cassettes
 			Next
 		End If
 	Loop
-
-	Say "Ending script..."
-	Wait 1
 		
 	Set FSO = Nothing
 	Set shell = Nothing
