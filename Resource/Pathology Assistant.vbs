@@ -6,7 +6,30 @@ script = WScript.Arguments(0)
 If script = "Cassettes" Then Cassettes
 If script = "CaseFinder" Then CaseFinder
 If script = "DuplicateBlock" Then DuplicateBlock
+If script = "SMALL" Then SMALL
+If script = "MEDIUM" Then MEDIUM
+If script = "LARGE" Then LARGE
+
 WScript.Quit
+
+Sub SMALL
+	If GetCaseWindow() Then containerSize("SMALL")
+End Sub
+
+Sub MEDIUM
+	If GetCaseWindow() Then containerSize("MED..")
+End Sub
+
+Sub LARGE
+	If GetCaseWindow() Then containerSize("LARGE")
+End Sub
+
+Function containerSize(size)
+	Set shell = CreateObject("Wscript.Shell")
+	stringkeys = "%n^3%{s}{Tab}{home}{Tab 3}{F2}" & size & "{down}%n"
+	shell.SendKeys stringkeys, True
+	Set shell = Nothing
+End Function
 
 Sub CaseFinder
 	Set shell = CreateObject("Wscript.Shell")
@@ -34,7 +57,7 @@ Sub DuplicateBlock
 	Set shell = CreateObject("Wscript.Shell")
 
 	If GetCaseWindow() Then
-		shell.SendKeys "%a", True
+		shell.SendKeys "%n", True
 		shell.SendKeys "^3", True
 		shell.SendKeys "%m", True
 		shell.SendKeys "{tab}{home}", True
@@ -50,7 +73,7 @@ If Not GetPowerPath() Then Exit Function
 	Set shell = CreateObject("Wscript.Shell")
 
 	For Index = 0 to 3
-								If shell.AppActivate("PowerPath " & PPTesting &"- [[AMP] Case Information - " ) Then
+		If shell.AppActivate("PowerPath " & PPTesting &"- [[AMP] Case Information - " ) Then
 			GetCaseWindow = True
 			Exit For
 		Else

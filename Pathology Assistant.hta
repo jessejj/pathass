@@ -32,27 +32,27 @@ td {padding: 10px;}
 	window.onload = (function main(){
 		window.resizeTo(700,900)
 		ClearIDs()
-		document.getElementById("footer-msg").innerHTML = "Checking for updates";
+		document.getElementById("footer-msg").innerHTML = "<i>Checking for updates</i>"
 
-		o = new XMLHttpRequest();
-		o.open("GET", "https://api.github.com/repos/jessepelley/pathologyAssistant/tags", false);
-		o.send();
+		o = new XMLHttpRequest()
+		o.open("GET", "https://api.github.com/repos/jessepelley/pathologyAssistant/tags", false)
+		o.send()
 
 		if (o.status == 200) {
-			json = o.responseText;
+			json = o.responseText
 		}
 
-		document.getElementById("title").innerHTML = "Pathology Assistant App";
+		document.getElementById("title").innerHTML = "Pathology Assistant App"
 
 		if (json.indexOf(PA.version) == -1) {
-			UpdateText = "<i>Unsupported Version</i> <input type='button' onclick='openLink()' value='Update'>";
-			Supported = false;
+			UpdateText = "<i>Unsupported Version</i> <input type='button' onclick='openLink()' value='Update'>"
+			Supported = false
 		} else {
-			UpdateText = "Supported Version";
-			Supported = true;
+			UpdateText = "Supported Version"
+			Supported = true
 		}
 
-		document.getElementById("footer-msg").innerHTML = UpdateText;
+		document.getElementById("footer-msg").innerHTML = UpdateText
 
 		buttons = [
 			'<button class="button" type="button" onclick="Cassettes()" title="Scripts for printing cassettes">Cassettes</button>',
@@ -60,7 +60,7 @@ td {padding: 10px;}
 			'<button class="button" type="button" onclick="oneClickSetup()" id="oneclickbutton" title="Apply all initial setup tasks for this PC" disabled >One Click Setup</button>',
 			'<button class="button" type="button" onclick="PowerPathSetup()">PowerPath Setup</button>',
 			'<button class="button" type="button" onclick="Support()" title="Email Jesse">Email Support</button>'
-		];
+		]
 
 		if (Supported) {
 			var i
@@ -97,35 +97,48 @@ td {padding: 10px;}
 			"documentlabelautoprint",
 			"cassettedeviceID",
 			"cassetteautoprint"
-		];
+		]
 	})
 
 	function Support() {
 		supportURL = "https://outlook.office.com/mail/deeplink/compose?"
 		supportURL = supportURL + "to=jpelley@eorla.ca&subject=Pathology%20Assistant%20App&body=%0A%0A%0A%0A%0A%0A%0A%0A%0A%0AApp%20Version%20"+ PA.version
-		var shell = new ActiveXObject("wscript.shell");
+		var shell = new ActiveXObject("wscript.shell")
 		//alert(supportURL)
-		shell.run(supportURL);
+		shell.run(supportURL)
 	}		
 	
 	function Commands() {
-		ClearIDs();
-		document.getElementById("Back").disabled = false;
-		document.getElementById("title").innerHTML = "Commands";
+		ClearIDs()
+		document.getElementById("Back").disabled = false
+		document.getElementById("title").innerHTML = "Commands"
 
 		commandButtons = [
+			'<button class="button" type="button" onclick="SMALL()">SMALL</button> <button class="button" type="button" onclick="MEDIUM()">MEDIUM</button> <button class="button" type="button" onclick="LARGE()">LARGE</button>',
 			'<button class="button" type="button" onclick="" disabled>Delete block</button>',
 			'<button class="button" type="button" onclick="DuplicateBlock()" >Duplicate block</button>',
 			'<button class="button" type="button" onclick="" disabled>Next block</button>',
 			'<button class="button" type="button" onclick="" disabled>My Signature</button>',
 			'<button class="button" type="button" onclick="" title="Toggle priority for PowerPath orders" disabled>Make All Orders Rush</button>',
 			'<button class="button" type="button" onclick="CaseFinder()" title="">Case Finder</button>'
-		];
+		]
 
 		var i
 		for (i = 0; i < commandButtons.length; i++){
 		document.getElementById(i).innerHTML = commandButtons[i]
 		}
+	}
+
+	function SMALL() {
+		runScript("SMALL", "SMALL")
+	}	
+	
+	function MEDIUM() {
+		runScript("MEDIUM", "MEDIUM")
+	}	
+	
+	function LARGE() {
+		runScript("LARGE", "LARGE")
 	}
 
 	function CaseFinder() {
@@ -138,34 +151,34 @@ td {padding: 10px;}
 	
 	function Cassettes(){
 		if (Supported){
-			ClearIDs();
-			document.getElementById("Back").disabled = false;
+			ClearIDs()
+			document.getElementById("Back").disabled = false
 
 			if (resetRegKeys("checkonly")){EnableApplyButton()}
-			CASoptionsHTML = "<option value = ''></option><option value = 'CIV-GRO-CAS1'>CIV-GRO-CAS1</option>";
+			CASoptionsHTML = "<option value = ''></option><option value = 'CIV-GRO-CAS1'>CIV-GRO-CAS1</option>"
 
 			try {
 				if (checkRegKeysAutoPrint() == "62") {
-				CASoptionsHTML = "<option value = ''></option><option value = 'CIV-GRO-CAS1' selected >CIV-GRO-CAS1</option>";
+				CASoptionsHTML = "<option value = ''></option><option value = 'CIV-GRO-CAS1' selected >CIV-GRO-CAS1</option>"
 				} 
 			}
 
 			catch(err) {
 			} 
 
-			PowerPathCassettesHTML = "Cassette Printer: <select onchange=EnableApplyButton() name = 'CAS' id = 'CAS'>" + CASoptionsHTML + "</select>";
-			BinHTML = "Exit bin: <select onchange=EnableApplyButton() name = 'ExitBin' id = 'ExitBin'> <option value = 'ExitBin1' selected>Bin 1</option><option value = 'ExitBin2'>Bin 2</option><option value = 'ExitBin3'>Bin 3</option></select>";
+			PowerPathCassettesHTML = "Cassette Printer: <select onchange=EnableApplyButton() name = 'CAS' id = 'CAS'>" + CASoptionsHTML + "</select>"
+			BinHTML = "Exit bin: <select onchange=EnableApplyButton() name = 'ExitBin' id = 'ExitBin'> <option value = 'ExitBin1' selected>Bin 1</option><option value = 'ExitBin2'>Bin 2</option><option value = 'ExitBin3'>Bin 3</option></select>"
 
-			document.getElementById("title").innerHTML = "Cassettes";
-			document.getElementById("0").innerHTML = BinHTML;
-			document.getElementById("1").innerHTML = PowerPathCassettesHTML;
+			document.getElementById("title").innerHTML = "Cassettes"
+			document.getElementById("0").innerHTML = BinHTML
+			document.getElementById("1").innerHTML = PowerPathCassettesHTML
 			document.getElementById("Apply").onclick = function() {ApplyCassettes()}
 
 		}
 	}
 
 	function EnableApplyButton(){
-		document.getElementById("Apply").disabled = false;
+		document.getElementById("Apply").disabled = false
 	}
 
 	function EnableResetButton(){
@@ -173,31 +186,36 @@ td {padding: 10px;}
 	}
 
 	function ApplyCassettes(){
-		selectedExitBin = document.getElementById("ExitBin").value;
-		if (selectedExitBin == "ExitBin2") {
-			runScript("Printing to Bin 2", "Cassettes", selectedExitBin)
-		}		
-		
-		if (selectedExitBin == "ExitBin3") {
-			runScript("Printing to Bin 3", "Cassettes", selectedExitBin)
-		}
+		selectedExitBin = document.getElementById("ExitBin").value
 
-		if (selectedExitBin == "ExitBin1") {
+		if (resetRegKeys("checkonly")){
 			resetRegKeys()
+			if (selectedExitBin == "ExitBin1"){document.getElementById("Apply").disabled = true}
 		} else {
-			EnableResetButton()
-		}	
+			
+			if (selectedExitBin == "ExitBin2") {
+				runScript("Printing to Bin 2", "Cassettes", selectedExitBin)
+			}		
+			
+			if (selectedExitBin == "ExitBin3") {
+				runScript("Printing to Bin 3", "Cassettes", selectedExitBin)
+			}
 
-		document.getElementById("Apply").disabled = true;
+			if (selectedExitBin != "ExitBin1") {
+				EnableResetButton()
+			}	
+
+			document.getElementById("Apply").disabled = true
+		}
 	}
 
 	function resetRegKeys(checkonly){
-		shell = new ActiveXObject("wscript.shell");
-		CassetteFolder = "C:\\Cassettes\\";
+		shell = new ActiveXObject("wscript.shell")
+		CassetteFolder = "C:\\Cassettes\\"
 		PrinterDir = "\\\\CLPATHIF01\\DIS_SHARE\\"
-		RegKey1 = "HKLM\\SOFTWARE\\Wow6432Node\\IMPAC\\PseudoDriver\\";
-		RegKey2 = "\\v1.0\\Directory Path";
-		C1 = RegKey1 + "CIV-GRO-CAS1" + RegKey2;
+		RegKey1 = "HKLM\\SOFTWARE\\Wow6432Node\\IMPAC\\PseudoDriver\\"
+		RegKey2 = "\\v1.0\\Directory Path"
+		C1 = RegKey1 + "CIV-GRO-CAS1" + RegKey2
 
 		if (regread(C1) == CassetteFolder) {
 			if (checkonly == "checkonly") {return true}
@@ -208,7 +226,7 @@ td {padding: 10px;}
 	}
 
 	function checkRegKeysAutoPrint(){
-		shell = new ActiveXObject("wscript.shell");
+		shell = new ActiveXObject("wscript.shell")
 		autoPrint = "HKCU\\Software\\Tamtron\\PowerPath Client\\Auto Print Cassette"
 		autoPrintPrinter = "HKCU\\Software\\Tamtron\\PowerPath Client\\Auto Print Cassette Device ID"
 
@@ -218,29 +236,29 @@ td {padding: 10px;}
 	function ClearIDs(){
 		var i
 		for (i = 0; i < 11; i++){
-			document.getElementById(i).innerHTML = "&nbsp;";
+			document.getElementById(i).innerHTML = "&nbsp;"
 		}
 	}
 
 	function openLink(){
-		var shell = new ActiveXObject("wscript.shell");
-		shell.run("https://github.com/jessepelley/pathologyAssistant/releases");
+		var shell = new ActiveXObject("wscript.shell")
+		shell.run("https://github.com/jessepelley/pathologyAssistant/releases")
 	}
 
 	function runScript(scriptName, script, arg){
-		shell = new ActiveXObject("wscript.shell");
-		shell.run ('%comspec% /C title ' + scriptName + ' | cscript.exe /nologo Resource/"Pathology Assistant.vbs" ' + script + ' ' + arg, 7);
+		shell = new ActiveXObject("wscript.shell")
+		shell.run ('%comspec% /C title ' + scriptName + ' | cscript.exe /nologo Resource/"Pathology Assistant.vbs" ' + script + ' ' + arg, 7)
 	}
 
 	function readScript(scriptName, script, arg){
-		shell = new ActiveXObject("wscript.shell");
-		blah = shell.exec ('wscript cscript Resource/"Pathology Assistant.vbs"  ' + script + ' ' + arg);
-		document.getElementById(5).innerHTML = "ProcessID: " + blah.ProcessID;
-		//alert(blah.StdOut.ReadLine());
+		shell = new ActiveXObject("wscript.shell")
+		blah = shell.exec ('wscript cscript Resource/"Pathology Assistant.vbs"  ' + script + ' ' + arg)
+		document.getElementById(5).innerHTML = "ProcessID: " + blah.ProcessID
+		//alert(blah.StdOut.ReadLine())
 		//do {
-		//	document.getElementById(6).innerHTML = blah.StdOut.ReadLine();
-		//} while (! blah.Stdout.atEndOfStream);
-		setInterval(function(){ document.getElementById(6).innerHTML = blah.StdOut.ReadLine(); }, 1000);	
+		//	document.getElementById(6).innerHTML = blah.StdOut.ReadLine()
+		//} while (! blah.Stdout.atEndOfStream)
+		setInterval(function(){ document.getElementById(6).innerHTML = blah.StdOut.ReadLine() }, 1000)	
 	}
 
 	function oneClickEligible() {
@@ -248,7 +266,7 @@ td {padding: 10px;}
 			"OH163934", //civic left handed bench
 			"OH181525", //civic right handed bench
 			"OH182236", //civic wide bench 
-			"OH182644"]; //civic labelase
+			"OH182644"] //civic labelase
 		shell = new ActiveXObject("Wscript.Shell")
 		ThisPC = shell.ExpandEnvironmentStrings("%COMPUTERNAME%")
 		//ThisPC = "OH163934" //for testing
@@ -257,7 +275,7 @@ td {padding: 10px;}
 			if (ThisPC == registeredList[i]) {return true}
 		}
 
-		return false;
+		return false
 	}
 
 	function oneClickSetup(){
@@ -332,7 +350,7 @@ td {padding: 10px;}
 	function PowerPathSetup() {
 		ClearIDs
 		document.getElementById("Back").disabled = false
-		document.getElementById("title").innerHTML = "PowerPath Setup";
+		document.getElementById("title").innerHTML = "PowerPath Setup"
 
 		setuplines = [
 			"Set server to CLPATHDB01",
@@ -343,7 +361,7 @@ td {padding: 10px;}
 			"Auto print document labels",
 			"Set cassette printer",
 			"Auto print cassettes"
-		];
+		]
 		var i
 		for (i = 0; i < setuplines.length; i++){
 			document.getElementById(i).innerHTML = setuplines[i]
