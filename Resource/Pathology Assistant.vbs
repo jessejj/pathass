@@ -9,8 +9,39 @@ If script = "DuplicateBlock" Then DuplicateBlock
 If script = "SMALL" Then SMALL
 If script = "MEDIUM" Then MEDIUM
 If script = "LARGE" Then LARGE
+						If script = "MakeOrdersRush" Then MakeOrdersRush
 
 WScript.Quit
+
+							Sub MakeOrdersRush
+									Set shell = CreateObject("Wscript.Shell")
+If shell.AppActivate("Edit Order for Case") Then
+NumberOfLoops = 9
+NumberOfLoops = InputBox("How many loops?")
+			
+Dim Strings(3)
+Strings(0) = "~"
+Strings(1) = "%h"
+Strings(2) = "~"
+Strings(3) = "{down}"
+
+For Index2 = 1 To NumberOfLoops
+For Index = 0 to UBound(Strings)
+    wscript.sleep 10
+    shell.sendkeys Strings(Index), True
+Next
+Next
+									
+								Else
+									Msgbox "can't find order window"
+								End If
+									
+	stringkeys = "%n^3%{s}{Tab}{home}{Tab 3}{F2}" & size & "{down}%n"
+	shell.SendKeys stringkeys, True
+	Set shell = Nothing
+							End Sub
+							
+						
 
 Sub SMALL
 	If GetCaseWindow() Then containerSize("SMALL")
