@@ -15,25 +15,31 @@ WScript.Quit
 
 							Sub MakeOrdersRush
 									Set shell = CreateObject("Wscript.Shell")
-If shell.AppActivate("Edit Order for Case") Then
+
 NumberOfLoops = 9
-NumberOfLoops = InputBox("How many loops?")
+NumberOfLoops = InputBox("How many orders?")
+
+If GetCaseWindow() Then
+
+shell.sendkeys("^3%o{home}"), True
 			
-Dim Strings(3)
+Dim Strings(4)
+
 Strings(0) = "~"
 Strings(1) = "%h"
 Strings(2) = "~"
 Strings(3) = "{down}"
-
+Strings(4) = "~"
+'make a loop to grab the Edit Order for Case window. %h keeps opening help
 For Index2 = 1 To NumberOfLoops
-For Index = 0 to UBound(Strings)
-    wscript.sleep 10
-    shell.sendkeys Strings(Index), True
-Next
+	For Index = 0 to UBound(Strings)
+		wscript.sleep 50
+		shell.sendkeys Strings(Index), True
+	Next
 Next
 									
 								Else
-									Msgbox "can't find order window"
+									Msgbox "can't find case window"
 								End If
 									
 	stringkeys = "%n^3%{s}{Tab}{home}{Tab 3}{F2}" & size & "{down}%n"
