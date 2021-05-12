@@ -119,7 +119,7 @@ td {padding: 10px;}
 			'<button class="button" type="button" onclick="DuplicateBlock()" >Duplicate block</button>',
 			'<button class="button" type="button" onclick="" disabled>Next block</button>',
 			'<button class="button" type="button" onclick="" disabled>My Signature</button>',
-			'<button class="button" type="button" onclick="" title="Toggle priority for PowerPath orders" disabled>Make All Orders Rush</button>',
+			'<button class="button" type="button" onclick="MakeOrdersRush()" title="Toggle priority for PowerPath orders">Make All Orders Rush</button>',
 			'<button class="button" type="button" onclick="CaseFinder()" title="">Case Finder</button>'
 		]
 
@@ -127,6 +127,10 @@ td {padding: 10px;}
 		for (i = 0; i < commandButtons.length; i++){
 		document.getElementById(i).innerHTML = commandButtons[i]
 		}
+	}
+	
+	function MakeOrdersRush() {
+		runScript("Rushing...", "MakeOrdersRush")
 	}
 
 	function SMALL() {
