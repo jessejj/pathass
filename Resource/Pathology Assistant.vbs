@@ -9,45 +9,62 @@ If script = "DuplicateBlock" Then DuplicateBlock
 If script = "SMALL" Then SMALL
 If script = "MEDIUM" Then MEDIUM
 If script = "LARGE" Then LARGE
-						If script = "MakeOrdersRush" Then MakeOrdersRush
+If script = "MakeOrdersRush" Then MakeOrdersRush
 
 WScript.Quit
 
-							Sub MakeOrdersRush
-									Set shell = CreateObject("Wscript.Shell")
+Sub MakeOrdersRush
+	Set shell = CreateObject("Wscript.Shell")
 
-NumberOfLoops = 9
-NumberOfLoops = InputBox("How many orders?")
+	Dim NumberOfOrders
+	NumberOfOrders = 5
+	NumberOfOrders = InputBox("How many orders?")
+	If Not IsNumeric(NumberOfOrders) Then 
+		MsgBox "Please enter a number"
+		Exit Sub
+	End If
 
-If GetCaseWindow() Then
+	If GetCaseWindow() Then
 
-shell.sendkeys("^3%o{home}"), True
-			
-Dim Strings(4)
+		shell.SendKeys("^3%o{home}~"), True
 
-Strings(0) = "~"
-Strings(1) = "%h"
-Strings(2) = "~"
-Strings(3) = "{down}"
-Strings(4) = "~"
-'make a loop to grab the Edit Order for Case window. %h keeps opening help
-For Index2 = 1 To NumberOfLoops
-	For Index = 0 to UBound(Strings)
-		wscript.sleep 50
-		shell.sendkeys Strings(Index), True
-	Next
-Next
-									
-								Else
-									Msgbox "can't find case window"
-								End If
-									
-	stringkeys = "%n^3%{s}{Tab}{home}{Tab 3}{F2}" & size & "{down}%n"
-	shell.SendKeys stringkeys, True
+		For Index = 0 to 5
+			Wait 1
+			If shell.AppActivate("Edit Order for Case") Then Exit For
+		Next
+
+		shell.SendKeys "%h~", True
+
+		For Index = 0 to 5
+			Wait 1
+			If GetCaseWindow() Then Exit For
+		Next
+		
+		shell.SendKeys "{down}", True
+
+		For OrderNumber = 1 to NumberOfOrders
+
+			shell.SendKeys "~", True
+
+			For Index = 0 to 5
+				Wait 1
+				If shell.AppActivate("Edit Order for Case") Then Exit For
+			Next
+
+			shell.SendKeys "%h~", True
+
+			For Index = 0 to 5
+				Wait 1
+				If GetCaseWindow() Then Exit For
+			Next
+
+			shell.SendKeys "{down}", True
+
+		Next
+		
+	End If
 	Set shell = Nothing
-							End Sub
-							
-						
+End Sub			
 
 Sub SMALL
 	If GetCaseWindow() Then containerSize("SMALL")
@@ -63,7 +80,7 @@ End Sub
 
 Function containerSize(size)
 	Set shell = CreateObject("Wscript.Shell")
-	stringkeys = "%n^3%{s}{Tab}{home}{Tab 3}{F2}" & size & "{down}%n"
+	stringkeys = "%n^3%{s}{Tab}{home}{Tab 3}" & size & "{down}%n"
 	shell.SendKeys stringkeys, True
 	Set shell = Nothing
 End Function
