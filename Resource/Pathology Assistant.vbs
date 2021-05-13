@@ -24,39 +24,48 @@ Sub MakeOrdersRush
 		Exit Sub
 	End If
 
+	'If NumberOfOrders > 20 Then NumberOfOrders = 20
+
 	If GetCaseWindow() Then
 
 		shell.SendKeys("^3%o{home}~"), True
 
 		For Index = 0 to 5
-			Wait 1
+			Wait 0.5
 			If shell.AppActivate("Edit Order for Case") Then Exit For
 		Next
 
 		shell.SendKeys "%h~", True
 
 		For Index = 0 to 5
-			Wait 1
+			Wait 0.5
 			If GetCaseWindow() Then Exit For
 		Next
 		
 		shell.SendKeys "{down}", True
 
-		For OrderNumber = 1 to NumberOfOrders
+		For OrderNumber = 2 to NumberOfOrders
 
 			shell.SendKeys "~", True
 
 			For Index = 0 to 5
-				Wait 1
+				Wait 0.1
 				If shell.AppActivate("Edit Order for Case") Then Exit For
 			Next
 
 			shell.SendKeys "%h~", True
 
 			For Index = 0 to 5
-				Wait 1
-				If GetCaseWindow() Then Exit For
+				Wait 0.1
+				If shell.AppActivate("PowerPath " & PPTesting &"- [[AMP] Case Information - " ) Then 
+					UserAborted = False
+					Exit For
+				Else
+					UserAborted = True
+				End If
 			Next
+
+			If UserAborted Then Exit Sub
 
 			shell.SendKeys "{down}", True
 
@@ -147,8 +156,8 @@ Function GetPowerPath()
 	If shell.AppActivate("PowerPath " & PPTesting) Then
 		If Not Maximized Then shell.SendKeys"%-x", True
 		GetPowerPath = True
-	Else
-		msgbox "Can't find PowerPath Client. Is it running?"
+	'Else
+		'msgbox "Can't find PowerPath Client. Is it running?"
 	End If
 	Set shell = Nothing
 End Function
