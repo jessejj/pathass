@@ -30,7 +30,7 @@ td {padding: 10px;}
 
 <script lang="javascript">
 	window.onload = (function main(){
-		window.resizeTo(700,900)
+		window.resizeTo(600,700)
 		ClearIDs()
 		document.getElementById("footer-msg").innerHTML = "<i>Checking for updates</i>"
 
@@ -120,6 +120,7 @@ td {padding: 10px;}
 			'<button class="button" type="button" onclick="" disabled>Next block</button>',
 			'<button class="button" type="button" onclick="" disabled>My Signature</button>',
 			'<button class="button" type="button" onclick="MakeOrdersRush()" title="Toggle priority for PowerPath orders">Make All Orders Rush</button>',
+			'<button class="button" type="button" onclick="TestButton()" title="">test</button>',
 			'<button class="button" type="button" onclick="CaseFinder()" title="">Case Finder</button>'
 		]
 
@@ -147,6 +148,10 @@ td {padding: 10px;}
 
 	function CaseFinder() {
 		runScript("Case Finder", "CaseFinder")
+	}
+
+	function TestButton() {
+		runScript("test", "test")
 	}
 
 	function DuplicateBlock() {

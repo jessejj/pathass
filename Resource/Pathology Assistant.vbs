@@ -10,8 +10,53 @@ If script = "SMALL" Then SMALL
 If script = "MEDIUM" Then MEDIUM
 If script = "LARGE" Then LARGE
 If script = "MakeOrdersRush" Then MakeOrdersRush
+if script = "test" Then testsub
 
 WScript.Quit
+
+Sub testsub
+	msgbox(GetReportInfo("LastName"))
+End Sub
+
+Function GetReportInfo(info)
+	Dim text
+	text = GetReportPlainText()
+
+	Select Case info
+
+	Case "DOB"
+		Array1 = Split(text, "DOB:", 2)
+		Array2 = Split(Array1(1), "insrsid9054164\charrsid8877405 ", 2)
+		Array3 = Split(Array2(1), "}", 2)
+		GetReportInfo = Array3(0)
+
+	Case "LastName"
+		Array1 = Split(text, "Patient:", 2)
+		Array2 = Split(Array1(1), "charrsid6755835 ", 2)
+		Array3 = Split(Array2(1), "\cell", 2)
+		PatientName = Array3(0)
+		PatientNameArr = Split(PatientName, ", ", 2)
+		GetReportInfo = PatientNameArr(0)
+
+	End Select
+
+End Function
+
+Function GetReportText()
+	Set w = GetObject(, "Word.Application")
+	GetReportText = w.ActiveDocument.Range.Text
+	Set w = Nothing
+End Function
+
+Function GetReportPlainText()
+	Set w = GetObject(, "Word.Application")
+	Set f = CreateObject("Scripting.FileSystemObject")
+	Set InputFile = f.OpenTextFile(w.ActiveDocument.FullName, 1, False)
+	GetReportPlainText = InputFile.ReadAll
+	Set InputFile = Nothing
+	Set f = Nothing
+	Set w = Nothing
+End Function
 
 Sub MakeOrdersRush
 	Set shell = CreateObject("Wscript.Shell")
@@ -106,11 +151,13 @@ Sub CaseFinder
 	Next
 
 	If shell.AppActivate("Case Finder") Then
+		Dim LastName, DOB
 		shell.SendKeys"%p", True
-		'Clipboard "bob"
-		shell.SendKeys"PATIENTS NAME", True
+		LastName = GetReportInfo("LastName")
+		shell.SendKeys LastName, True
 		shell.SendKeys "{tab 9}", True
-		shell.SendKeys "2020-01-01", True
+		DOB = GetReportInfo("DOB")
+		shell.SendKeys DOB, True
 	End If
 
 	Set shell = Nothing
