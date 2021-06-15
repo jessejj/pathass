@@ -136,7 +136,7 @@ If Not GetPowerPath() Then Exit Function
 	Set shell = CreateObject("Wscript.Shell")
 
 	For Index = 0 to 3
-		If shell.AppActivate("PowerPath " & PPTesting &"- [[AMP] Case Information - " ) Then
+		If shell.AppActivate("PowerPath " & PPTesting & "- [[AMP] Case Information - " ) Then
 			GetCaseWindow = True
 			Exit For
 		Else
@@ -144,6 +144,9 @@ If Not GetPowerPath() Then Exit Function
 		End If
 		Wait 1
 	Next
+
+	GetCaseWindow = False 'can't find case window linked to AMP.
+
 	Set shell = Nothing
 End Function
 
