@@ -215,7 +215,7 @@ Sub Cassettes
 
 	Say "Changing cassette exit bin to Bin " & ExitBin
 	CassetteDir = "C:\Cassettes\"
-	PrinterDir = "\\CLPATHIF01\DIS_SHARE\"
+	PrinterDir = "\\CLPPATHIF01\DIS_SHARE\"
 	Set FSO = CreateObject("Scripting.FileSystemObject")
 	If Not FSO.FolderExists(CassetteDir) Then FSO.CreateFolder(CassetteDir)
 
