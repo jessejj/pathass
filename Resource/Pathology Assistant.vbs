@@ -195,6 +195,8 @@ If Not GetPowerPath() Then Exit Function
 	GetCaseWindow = False 'can't find case window linked to AMP.
 
 	Set shell = Nothing
+	
+	If GetCaseWindow = False Then MsgBox "Can't find window title " & "PowerPath Client " & PPTesting & "- [[AMP] Case Information - "
 End Function
 
 Function GetPowerPath()
