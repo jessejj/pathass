@@ -102,7 +102,7 @@ Sub MakeOrdersRush
 
 			For Index = 0 to 5
 				Wait 0.1
-				If shell.AppActivate("PowerPath Client " & PPTesting &"- [[AMP] Case" ) Then 
+				If shell.AppActivate("PowerPath " & PPTesting &"- [[AMP] Case" ) Then 
 					UserAborted = False
 					Exit For
 				Else
@@ -183,7 +183,7 @@ If Not GetPowerPath() Then Exit Function
 	Set shell = CreateObject("Wscript.Shell")
 
 	For Index = 0 to 3
-		If shell.AppActivate("PowerPath Client " & PPTesting & "- [[AMP] Case" ) Then
+		If shell.AppActivate("PowerPath " & PPTesting & "- [[AMP] Case" ) Then
 			GetCaseWindow = True
 			Exit For
 		Else
