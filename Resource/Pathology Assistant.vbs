@@ -199,11 +199,11 @@ End Function
 
 Function GetPowerPath()
 	Set shell = CreateObject("Wscript.Shell")
-	If shell.AppActivate("PowerPath Client " & PPTesting &" - ") Then
+	If shell.AppActivate("PowerPath Client" & PPTesting &" - ") Then
 		Maximized = True
 	End If
 
-	If shell.AppActivate("PowerPath Client " & PPTesting) Then
+	If shell.AppActivate("PowerPath Client" & PPTesting) Then
 		If Not Maximized Then shell.SendKeys"%-x", True
 		GetPowerPath = True
 	'Else
