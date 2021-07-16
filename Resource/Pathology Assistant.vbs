@@ -1,8 +1,6 @@
 Say "Starting script..."
 script = WScript.Arguments(0)
 
-'PPTesting = "Client (Test System)"
-
 If script = "Cassettes" Then Cassettes
 If script = "CaseFinder" Then CaseFinder
 If script = "DuplicateBlock" Then DuplicateBlock
@@ -102,7 +100,12 @@ Sub MakeOrdersRush
 
 			For Index = 0 to 5
 				Wait 0.1
+<<<<<<< Updated upstream
 				If shell.AppActivate("PowerPath " & PPTesting &"- [[AMP] Case" ) Then 
+=======
+				'If shell.AppActivate("PowerPath " & PPTesting &"- [[AMP] Case Information - " ) Then
+				If shell.AppActivate("PowerPath Client") Then 
+>>>>>>> Stashed changes
 					UserAborted = False
 					Exit For
 				Else
@@ -183,7 +186,12 @@ If Not GetPowerPath() Then Exit Function
 	Set shell = CreateObject("Wscript.Shell")
 
 	For Index = 0 to 3
+<<<<<<< Updated upstream
 		If shell.AppActivate("PowerPath " & PPTesting & "- [[AMP] Case" ) Then
+=======
+		'If shell.AppActivate("PowerPath " & PPTesting & "- [[AMP] Case Information - " ) Then
+		If shell.AppActivate("PowerPath Client" ) Then 'for some reason Windows 10 doesn't allow the Window Title to be read
+>>>>>>> Stashed changes
 			GetCaseWindow = True
 			Exit For
 		Else
@@ -201,6 +209,7 @@ End Function
 
 Function GetPowerPath()
 	Set shell = CreateObject("Wscript.Shell")
+<<<<<<< Updated upstream
 	If shell.AppActivate("PowerPath Client" & PPTesting &" - ") Then
 		Maximized = True
 	End If
@@ -208,9 +217,20 @@ Function GetPowerPath()
 	If shell.AppActivate("PowerPath Client" & PPTesting) Then
 		If Not Maximized Then shell.SendKeys"%-x", True
 		GetPowerPath = True
+=======
+	'If shell.AppActivate("PowerPath " & PPTesting &" - ") Then
+	If shell.AppActivate("PowerPath Client") Then 'for some reason Windows 10 doesn't let the window title be read by shell object anymore when maximized
+		'Maximized = True
+		GetPowerPath = True
+	End If
+
+	'If shell.AppActivate("PowerPath " & PPTesting) Then
+	'	If Not Maximized Then shell.SendKeys"%-x", True
+	'	GetPowerPath = True
+>>>>>>> Stashed changes
 	'Else
 		'msgbox "Can't find PowerPath Client. Is it running?"
-	End If
+	'End If
 	Set shell = Nothing
 End Function
 
@@ -241,37 +261,36 @@ Sub Cassettes
 	If WScript.Arguments(1) = "ExitBin3" Then ExitBin = 3
 
 	Set shell = CreateObject("Wscript.Shell")
-	Dim ThisPC
-	ThisPC = shell.ExpandEnvironmentStrings("%COMPUTERNAME%")
-	'ThisPC = "OH182236"	'for testing
-
-	Dim casArr(0, 4)	'2 dimensional array of cassette printers and the PCs that print to it
-	casArr(0, 0) = "CIV-GRO-CAS1"
-	casArr(0, 1) = "OH182236"	'wide bench
-	casArr(0, 2) = "OH181525"	'right handed bench
-	casArr(0, 3) = "OH163934"	'left handed bench
-	casArr(0, 4) = "OH182644"	'labelase
-
-	For Index = 0 to UBound(casArr, 2)
-		If ThisPC = casArr(0, Index) Then ChangeEnabled = True
-	Next
-
-	If Not ChangeEnabled Then 
-		Say "This script cannot change the cassette exit bin for this PC"
-		Wait 3
-		WScript.Quit
-	End If
-
+	shell.AppActivate("Pathology Assistant")
+	
 	Say "Changing cassette exit bin to Bin " & ExitBin
 	CassetteDir = "C:\Cassettes\"
 	PrinterDir = "\\CLPPATHIF01\DIS_SHARE\"
 	Set FSO = CreateObject("Scripting.FileSystemObject")
 	If Not FSO.FolderExists(CassetteDir) Then FSO.CreateFolder(CassetteDir)
 
-	shell.RegWrite "HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\IMPAC\PseudoDriver\CIV-GRO-CAS1\v1.0\Directory Path", CassetteDir, "REG_SZ" 
-
+	'shell.RegWrite "HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\IMPAC\PseudoDriver\CIV-GRO-CAS1\v1.0\Directory Path", CassetteDir, "REG_SZ" 
+	Counter = 0
 	Do
-		If Not shell.RegRead("HKLM\SOFTWARE\Wow6432Node\IMPAC\PseudoDriver\CIV-GRO-CAS1\v1.0\Directory Path") = CassetteDir Then Exit Do
+		Say "waiting..."
+		
+		On Error Resume Next
+		If shell.RegRead("HKLM\SOFTWARE\Wow6432Node\IMPAC\PseudoDriver\CIV-GRO-CAS1\v1.0\Directory Path") = CassetteDir Then 
+			'continue
+		ElseIf shell.RegRead("HKLM\SOFTWARE\Wow6432Node\IMPAC\PseudoDriver\GEN-GRO-CAS1\v1.0\Directory Path") = CassetteDir Then
+			'continue
+		ElseIf shell.RegRead("HKLM\SOFTWARE\Wow6432Node\IMPAC\PseudoDriver\GEN-GRO-CAS2\v1.0\Directory Path") = CassetteDir Then
+			'continue
+		ElseIf shell.RegRead("HKLM\SOFTWARE\Wow6432Node\IMPAC\PseudoDriver\GEN-GRO-CAS3\v1.0\Directory Path") = CassetteDir Then
+			'continue
+		Else
+			If Not Counter = 0 Then Say "Cassette redirection was stopped."
+			If Couner = 0 Then Say "Failed to change cassette bin"
+			Exit Do
+		End If
+
+		If Counter = 0 Then Counter = 1
+
 		Set Folder = FSO.GetFolder(CassetteDir)
 		Set Files = Folder.Files
 		If Files.Count = 0 Then
@@ -299,7 +318,7 @@ Sub Cassettes
 					
 					file.move PrinterDir
 					Say "(" & CassetteCount & "/" & TotalCassettes & ") cassettes sent to the printer."
-					If CassetteCount = TotalCassettes Then Say "Now safe to stop script."
+					If CassetteCount = TotalCassettes Then Say "Now okay to stop script."
 				
 				If LargeBatch Then
 					For Index = 1 to 11 'seconds (change this value to control how long it takes for the queue to be processed)
@@ -309,6 +328,9 @@ Sub Cassettes
 			Next
 		End If
 	Loop
+
+	Say "Exiting..."
+	Wait 3
 		
 	Set FSO = Nothing
 	Set shell = Nothing

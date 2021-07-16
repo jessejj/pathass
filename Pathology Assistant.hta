@@ -57,9 +57,10 @@ td {padding: 10px;}
 		buttons = [
 			'<button class="button" type="button" onclick="Cassettes()" title="Scripts for printing cassettes">Cassettes</button>',
 			'<button class="button" type="button" onclick="Commands()">Commands</button>',
-			'<button class="button" type="button" onclick="oneClickSetup()" id="oneclickbutton" title="Apply all initial setup tasks for this PC" disabled >One Click Setup</button>',
-			'<button class="button" type="button" onclick="PowerPathSetup()">PowerPath Setup</button>',
-			'<button class="button" type="button" onclick="Support()" title="Email Jesse">Email Support</button>'
+			'<button class="button" type="button" onclick="testSQL()">test SQL</button>'
+			//'<button class="button" type="button" onclick="oneClickSetup()" id="oneclickbutton" title="Apply all initial setup tasks for this PC" disabled >One Click Setup</button>',
+			//'<button class="button" type="button" onclick="PowerPathSetup()">PowerPath Setup</button>',
+			//'<button class="button" type="button" onclick="Support()" title="Email Jesse">Email Support</button>'
 		]
 
 		if (Supported) {
@@ -108,6 +109,51 @@ td {padding: 10px;}
 		shell.run(supportURL)
 	}		
 	
+	function testSQL() {
+		ClearIDs()
+		document.getElementById("Back").disabled = false
+		document.getElementById("title").innerHTML = "test sql"
+		document.getElementById("0").innerHTML = "sql here"
+		sqlstm()
+
+	}
+
+	function sqlstm() {
+		objConnection = new ActiveXObject("ADODB.Connection")
+		myRecordSet = new ActiveXObject("ADODB.Recordset")
+		
+		ServerPath = prompt("Server:","DB")
+		Database = prompt("Database:","DB")
+		UserID = prompt("User:","user")
+		thing = prompt("Enter Password:","Password")
+
+		if (thing == null) {return}
+
+		adStateClosed = 0
+		ConnectionString = "Provider=SQLOLEDB.1;Data Source=" + ServerPath + ";Persist Security Info=True;User ID=" + UserID + ";password=" + thing + ";Initial Catalog=" + Database + ";"
+		alert(ConnectionString)
+
+		if (objConnection.State == adStateClosed) {
+			//objConnection.ConnectionString = ConnectionString
+			objConnection.Open(ConnectionString)
+		}
+
+		myRecordSet.ActiveConnection = objConnection
+
+		SQL = "SELECT * FROM personnel"
+		myRecordSet.Open(SQL)
+
+		document.getElementById("0").innerHTML = myRecordSet.Fields(0).name
+		document.getElementById("1").innerHTML = myRecordSet.Fields(1).name
+		document.getElementById("2").innerHTML = myRecordSet.Fields(2).name
+		myRecordSet.Move(1)
+		document.getElementById("3").innerHTML = myRecordSet.Fields(0)
+		document.getElementById("4").innerHTML = myRecordSet.Fields(1)
+		document.getElementById("5").innerHTML = myRecordSet.Fields(2)
+		
+		myRecordSet.Close()
+	}
+
 	function Commands() {
 		ClearIDs()
 		document.getElementById("Back").disabled = false
@@ -128,7 +174,7 @@ td {padding: 10px;}
 		for (i = 0; i < commandButtons.length; i++){
 		document.getElementById(i).innerHTML = commandButtons[i]
 		}
-	}
+	} 
 	
 	function MakeOrdersRush() {
 		runScript("Rushing...", "MakeOrdersRush")
@@ -150,9 +196,7 @@ td {padding: 10px;}
 		runScript("Case Finder", "CaseFinder")
 	}
 
-	function TestButton() {
-		runScript("test", "test")
-	}
+
 
 	function DuplicateBlock() {
 		runScript("Duplicate Block", "DuplicateBlock")
@@ -164,24 +208,36 @@ td {padding: 10px;}
 			document.getElementById("Back").disabled = false
 
 			if (resetRegKeys("checkonly")){EnableApplyButton()}
-			CASoptionsHTML = "<option value = ''></option><option value = 'CIV-GRO-CAS1'>CIV-GRO-CAS1</option>"
 
-			try {
-				if (checkRegKeysAutoPrint() == "62") {
-				CASoptionsHTML = "<option value = ''></option><option value = 'CIV-GRO-CAS1' selected >CIV-GRO-CAS1</option>"
-				} 
+			availablePrinters = getCassettePrinters()
+			CASoptionsHTML = "<option value = ''></option>"
+
+			for (i = 0; i < availablePrinters.length; i++) {
+				CASoptionsHTML += "<option value = '" + availablePrinters[i] + "'>" + availablePrinters[i] + "</option>"
 			}
 
-			catch(err) {
-			} 
-
-			PowerPathCassettesHTML = "Cassette Printer: <select onchange=EnableApplyButton() name = 'CAS' id = 'CAS'>" + CASoptionsHTML + "</select>"
+			//PowerPathCassettesHTML = "Cassette Printer: <select onchange=EnableApplyButton() name = 'CAS' id = 'CAS'>" + CASoptionsHTML + "</select>"
+			PowerPathCassettesHTML = "<select onchange=EnableApplyButton() name = 'CAS' id = 'CAS'>" + CASoptionsHTML + "</select>"
 			BinHTML = "Exit bin: <select onchange=EnableApplyButton() name = 'ExitBin' id = 'ExitBin'> <option value = 'ExitBin1' selected>Bin 1</option><option value = 'ExitBin2'>Bin 2</option><option value = 'ExitBin3'>Bin 3</option></select>"
 
 			document.getElementById("title").innerHTML = "Cassettes"
-			document.getElementById("0").innerHTML = BinHTML
+			//document.getElementById("0").innerHTML = BinHTML
+			//document.getElementById("1").innerHTML = PowerPathCassettesHTML
+
+			document.getElementById("0").innerHTML = "Printer"
+			document.getElementById("b0").innerHTML = "Bin 2"
+			document.getElementById("c0").innerHTML = "Bin 3"
+			document.getElementById("b1").innerHTML = '<input type="radio" id="ExitBin2" name="ExitBin" value="ExitBin2">'
+			document.getElementById("c1").innerHTML = '<input type="radio" id="ExitBin3" name="ExitBin" value="ExitBin3">'
+
+			document.getElementById("r1").innerHTML = '<button class="button" type="button" onclick="ApplyCassettes()" title="Reset back to Bin 1" style="float: right;">Redirect</button>'
+
+
 			document.getElementById("1").innerHTML = PowerPathCassettesHTML
+			
+			
 			document.getElementById("Apply").onclick = function() {ApplyCassettes()}
+			//document.getElementById("3").innerHTML = getCassettePrinters()
 
 		}
 	}
@@ -191,11 +247,17 @@ td {padding: 10px;}
 	}
 
 	function EnableResetButton(){
-		document.getElementById("r0").innerHTML = '<button class="button" type="button" onclick="resetRegKeys()" title="Reset back to Bin 1" style="float: right;">Reset to Bin 1</button>'
+		document.getElementById("r0").innerHTML = '<button class="button" type="button" onclick="resetRegKeys()" title="Reset back to Bin 1" style="float: right;">Reset</button>'
 	}
 
 	function ApplyCassettes(){
-		selectedExitBin = document.getElementById("ExitBin").value
+		if (document.getElementById("ExitBin2").checked) {
+			selectedExitBin = "ExitBin2"
+		}
+
+		if (document.getElementById("ExitBin3").checked) {
+			selectedExitBin = "ExitBin3"
+		}
 
 		if (resetRegKeys("checkonly")){
 			resetRegKeys()
@@ -208,6 +270,7 @@ td {padding: 10px;}
 			
 			if (selectedExitBin == "ExitBin3") {
 				runScript("Printing to Bin 3", "Cassettes", selectedExitBin)
+				//readScript("Printing to Bin 3", "Cassettes", selectedExitBin)
 			}
 
 			if (selectedExitBin != "ExitBin1") {
@@ -216,6 +279,23 @@ td {padding: 10px;}
 
 			document.getElementById("Apply").disabled = true
 		}
+	}
+
+	function getCassettePrinters(){
+		shell = new ActiveXObject("wscript.shell")
+		RegKey = "HKLM\\SOFTWARE\\Wow6432Node\\IMPAC\\PseudoDriver\\"
+
+		printers = ["CIV-GRO-CAS1","CIV-GRO-CAS2","GEN-GRO-CAS1","GEN-GRO-CAS2","GEN-GRO-CAS3","RIV-GRO-CAS1"]
+		availablePrinters = []
+
+		for (i = 0; i < printers.length; i++) {
+			try {
+				shell.regread(RegKey + printers[i] + "\\")
+				availablePrinters[availablePrinters.length] = printers[i] 
+			}
+			catch(err){}
+		}
+		return availablePrinters
 	}
 
 	function resetRegKeys(checkonly){
@@ -259,15 +339,25 @@ td {padding: 10px;}
 		shell.run ('%comspec% /C title ' + scriptName + ' | cscript.exe /nologo Resource/"Pathology Assistant.vbs" ' + script + ' ' + arg, 7)
 	}
 
+	function TestButton() {
+		readScript("test", "test")
+	}
+
 	function readScript(scriptName, script, arg){
 		shell = new ActiveXObject("wscript.shell")
-		blah = shell.exec ('wscript cscript Resource/"Pathology Assistant.vbs"  ' + script + ' ' + arg)
+		blah = shell.exec ('%comspec% /c title ' + scriptName + ' | cscript /nologo Resource/"Pathology Assistant.vbs"  ' + script + ' ' + arg)
 		document.getElementById(5).innerHTML = "ProcessID: " + blah.ProcessID
 		//alert(blah.StdOut.ReadLine())
 		//do {
 		//	document.getElementById(6).innerHTML = blah.StdOut.ReadLine()
 		//} while (! blah.Stdout.atEndOfStream)
-		setInterval(function(){ document.getElementById(6).innerHTML = blah.StdOut.ReadLine() }, 1000)	
+
+
+		//setTimeout(function(){ document.getElementById(6).innerHTML = blah.StdOut.ReadLine() }, 1000)
+			bob = 1
+		setInterval(function(){ document.getElementById(6).innerHTML = blah.StdOut.ReadLine() + bob
+			bob = bob + 1
+		}, 1000)	
 	}
 
 	function oneClickEligible() {
@@ -342,6 +432,7 @@ td {padding: 10px;}
 	function regread(key) {
 		key = key.replace(/\//g,"\\")
 		shell = new ActiveXObject("wscript.shell")
+
 		try {
 			return shell.regread(key)
 		}
@@ -394,17 +485,17 @@ td {padding: 10px;}
 <body style="font-family:'Segoe UI', Roboto,'Helvetica Neue',Arial,'Noto Sans',sans-serif; margin: 30px; line-height: normal" >
 <h1 style="text-align:center" id="title">Please extract the archive and uncheck the 'Always ask before opening this file' box before running.</h1>
 <table style="width: 100%;">
-	<tr><td><p id="0"></p></td><td><div id="r0"></div></td></tr>
-	<tr><td><p id="1"></p></td><td><div id="r1"></div></td></tr>
-	<tr><td><p id="2"></p></td><td><div id="r2"></div></td></tr>
-	<tr><td><p id="3"></p></td><td><div id="r3"></div></td></tr>
-	<tr><td><p id="4"></p></td><td><div id="r4"></div></td></tr>
-	<tr><td><p id="5"></p></td><td><div id="r5"></div></td></tr>
-	<tr><td><p id="6"></p></td><td><div id="r6"></div></td></tr>
-	<tr><td><p id="7"></p></td><td><div id="r7"></div></td></tr>
-	<tr><td><p id="8"></p></td><td><div id="r8"></div></td></tr>
-	<tr><td><p id="9"></p></td><td><div id="r9"></div></td></tr>
-	<tr><td><p id="10"></p></td><td><div id="r10"></div></td></tr>
+	<tr><td><p id="0"></p></td><td><div id="b0"></div></td><td><div id="c0"></div></td><td><div id="r0"></div></td></tr>
+	<tr><td><p id="1"></p></td><td><div id="b1"></div></td><td><div id="c1"></div></td><td><div id="r1"></div></td></tr>
+	<tr><td><p id="2"></p></td><td><div id="b2"></div></td><td><div id="c2"></div></td><td><div id="r2"></div></td></tr>
+	<tr><td><p id="3"></p></td><td><div id="b3"></div></td><td><div id="c3"></div></td><td><div id="r3"></div></td></tr>
+	<tr><td><p id="4"></p></td><td><div id="b4"></div></td><td><div id="c4"></div></td><td><div id="r4"></div></td></tr>
+	<tr><td><p id="5"></p></td><td><div id="b5"></div></td><td><div id="c5"></div></td><td><div id="r5"></div></td></tr>
+	<tr><td><p id="6"></p></td><td><div id="b6"></div></td><td><div id="c6"></div></td><td><div id="r6"></div></td></tr>
+	<tr><td><p id="7"></p></td><td><div id="b7"></div></td><td><div id="c7"></div></td><td><div id="r7"></div></td></tr>
+	<tr><td><p id="8"></p></td><td><div id="b8"></div></td><td><div id="c8"></div></td><td><div id="r8"></div></td></tr>
+	<tr><td><p id="9"></p></td><td><div id="b9"></div></td><td><div id="c9"></div></td><td><div id="r9"></div></td></tr>
+	<tr><td><p id="10"></p></td><td><div id="b10"></div></td><td><div id="c10"></div></td><td><div id="r10"></div></td></tr>
 </table>
 </body>
 <div id=footer>
