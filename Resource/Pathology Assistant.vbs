@@ -100,12 +100,8 @@ Sub MakeOrdersRush
 
 			For Index = 0 to 5
 				Wait 0.1
-<<<<<<< Updated upstream
-				If shell.AppActivate("PowerPath " & PPTesting &"- [[AMP] Case" ) Then 
-=======
 				'If shell.AppActivate("PowerPath " & PPTesting &"- [[AMP] Case Information - " ) Then
 				If shell.AppActivate("PowerPath Client") Then 
->>>>>>> Stashed changes
 					UserAborted = False
 					Exit For
 				Else
@@ -186,12 +182,8 @@ If Not GetPowerPath() Then Exit Function
 	Set shell = CreateObject("Wscript.Shell")
 
 	For Index = 0 to 3
-<<<<<<< Updated upstream
-		If shell.AppActivate("PowerPath " & PPTesting & "- [[AMP] Case" ) Then
-=======
 		'If shell.AppActivate("PowerPath " & PPTesting & "- [[AMP] Case Information - " ) Then
 		If shell.AppActivate("PowerPath Client" ) Then 'for some reason Windows 10 doesn't allow the Window Title to be read
->>>>>>> Stashed changes
 			GetCaseWindow = True
 			Exit For
 		Else
@@ -209,15 +201,6 @@ End Function
 
 Function GetPowerPath()
 	Set shell = CreateObject("Wscript.Shell")
-<<<<<<< Updated upstream
-	If shell.AppActivate("PowerPath Client" & PPTesting &" - ") Then
-		Maximized = True
-	End If
-
-	If shell.AppActivate("PowerPath Client" & PPTesting) Then
-		If Not Maximized Then shell.SendKeys"%-x", True
-		GetPowerPath = True
-=======
 	'If shell.AppActivate("PowerPath " & PPTesting &" - ") Then
 	If shell.AppActivate("PowerPath Client") Then 'for some reason Windows 10 doesn't let the window title be read by shell object anymore when maximized
 		'Maximized = True
@@ -227,7 +210,6 @@ Function GetPowerPath()
 	'If shell.AppActivate("PowerPath " & PPTesting) Then
 	'	If Not Maximized Then shell.SendKeys"%-x", True
 	'	GetPowerPath = True
->>>>>>> Stashed changes
 	'Else
 		'msgbox "Can't find PowerPath Client. Is it running?"
 	'End If
