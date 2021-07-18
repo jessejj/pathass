@@ -259,17 +259,21 @@ td {padding: 10px;}
 			selectedExitBin = "ExitBin3"
 		}
 
+		selectedPrinter = document.getElementById("CAS").value
+
 		if (resetRegKeys("checkonly")){
 			resetRegKeys()
 			if (selectedExitBin == "ExitBin1"){document.getElementById("Apply").disabled = true}
 		} else {
 			
 			if (selectedExitBin == "ExitBin2") {
-				runScript("Printing to Bin 2", "Cassettes", selectedExitBin)
+				redirectCassettes(selectedPrinter)
+				runScript("Printing to Bin 2", "Cassettes", selectedExitBin, selectedPrinter)
 			}		
 			
 			if (selectedExitBin == "ExitBin3") {
-				runScript("Printing to Bin 3", "Cassettes", selectedExitBin)
+				redirectCassettes(selectedPrinter)
+				runScript("Printing to Bin 3", "Cassettes", selectedExitBin, selectedPrinter)
 				//readScript("Printing to Bin 3", "Cassettes", selectedExitBin)
 			}
 
@@ -283,14 +287,14 @@ td {padding: 10px;}
 
 	function getCassettePrinters(){
 		shell = new ActiveXObject("wscript.shell")
-		RegKey = "HKLM\\SOFTWARE\\Wow6432Node\\IMPAC\\PseudoDriver\\"
+		regKey = "HKLM\\SOFTWARE\\Wow6432Node\\IMPAC\\PseudoDriver\\"
 
 		printers = ["CIV-GRO-CAS1","CIV-GRO-CAS2","GEN-GRO-CAS1","GEN-GRO-CAS2","GEN-GRO-CAS3","RIV-GRO-CAS1"]
 		availablePrinters = []
 
 		for (i = 0; i < printers.length; i++) {
 			try {
-				shell.regread(RegKey + printers[i] + "\\")
+				shell.regread(regKey + printers[i] + "\\")
 				availablePrinters[availablePrinters.length] = printers[i] 
 			}
 			catch(err){}
@@ -300,18 +304,27 @@ td {padding: 10px;}
 
 	function resetRegKeys(checkonly){
 		shell = new ActiveXObject("wscript.shell")
-		CassetteFolder = "C:\\Cassettes\\"
-		PrinterDir = "\\\\CLPPATHIF01\\DIS_SHARE\\"
-		RegKey1 = "HKLM\\SOFTWARE\\Wow6432Node\\IMPAC\\PseudoDriver\\"
-		RegKey2 = "\\v1.0\\Directory Path"
-		C1 = RegKey1 + "CIV-GRO-CAS1" + RegKey2
+		cassetteFolder = "C:\\Cassettes\\"
+		printerDir = "\\\\CLPPATHIF01\\DIS_SHARE\\"
 
-		if (regread(C1) == CassetteFolder) {
-			if (checkonly == "checkonly") {return true}
-			regwrite(C1, PrinterDir)
-			document.getElementById("r0").innerHTML = '<div id="r0"></div>'
+		availablePrinters = getCassettePrinters()
+
+		for (i = 0; i < availablePrinters.length; i++) {
+			regKey = "HKLM\\SOFTWARE\\Wow6432Node\\IMPAC\\PseudoDriver\\" + availablePrinters[i] + "\\v1.0\\Directory Path"
+			if (regread(regKey) == cassetteFolder) {
+				if (checkonly == "checkonly") {return true}
+				regwrite(regKey, printerDir)
+				document.getElementById("r0").innerHTML = '<div id="r0"></div>'
+			}
 		}
+	}
 
+	function redirectCassettes(selectedPrinter) {
+		shell = new ActiveXObject("wscript.shell")
+		cassetteFolder = "C:\\Cassettes\\"
+		regKey = "HKLM\\SOFTWARE\\Wow6432Node\\IMPAC\\PseudoDriver\\" + selectedPrinter + "\\v1.0\\Directory Path"
+
+		regwrite(regKey, cassetteFolder)
 	}
 
 	function checkRegKeysAutoPrint(){
@@ -334,9 +347,11 @@ td {padding: 10px;}
 		shell.run("https://github.com/jessepelley/pathologyAssistant/releases")
 	}
 
-	function runScript(scriptName, script, arg){
+	function runScript(scriptName, script, arg1, arg2){
+		scriptName = scriptName || "Some Script"
+		arg2 = arg2 || null
 		shell = new ActiveXObject("wscript.shell")
-		shell.run ('%comspec% /C title ' + scriptName + ' | cscript.exe /nologo Resource/"Pathology Assistant.vbs" ' + script + ' ' + arg, 7)
+		shell.run ('%comspec% /C title ' + scriptName + ' | cscript.exe /nologo Resource/"Pathology Assistant.vbs" ' + script + ' ' + arg1 + ' ' + arg2, 7)
 	}
 
 	function TestButton() {

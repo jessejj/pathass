@@ -239,6 +239,14 @@ Function Wait(seconds)
 End Function
 
 Sub Cassettes
+	If WScript.Arguments(2) = "null" Then 
+		Say "Cassette printer name was not passed to script. Exiting..."
+		Wait 10
+		Exit Sub
+	Else
+		Printer = WScript.Arguments(2)
+	End If
+
 	If WScript.Arguments(1) = "ExitBin2" Then ExitBin = 2
 	If WScript.Arguments(1) = "ExitBin3" Then ExitBin = 3
 
@@ -248,30 +256,22 @@ Sub Cassettes
 	Say "Changing cassette exit bin to Bin " & ExitBin
 	CassetteDir = "C:\Cassettes\"
 	PrinterDir = "\\CLPPATHIF01\DIS_SHARE\"
+	CheckReg = "HKLM\SOFTWARE\Wow6432Node\IMPAC\PseudoDriver\" & Printer & "\v1.0\Directory Path"
+
 	Set FSO = CreateObject("Scripting.FileSystemObject")
 	If Not FSO.FolderExists(CassetteDir) Then FSO.CreateFolder(CassetteDir)
 
-	'shell.RegWrite "HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\IMPAC\PseudoDriver\CIV-GRO-CAS1\v1.0\Directory Path", CassetteDir, "REG_SZ" 
 	Counter = 0
-	Do
-		Say "waiting..."
-		
-		On Error Resume Next
-		If shell.RegRead("HKLM\SOFTWARE\Wow6432Node\IMPAC\PseudoDriver\CIV-GRO-CAS1\v1.0\Directory Path") = CassetteDir Then 
-			'continue
-		ElseIf shell.RegRead("HKLM\SOFTWARE\Wow6432Node\IMPAC\PseudoDriver\GEN-GRO-CAS1\v1.0\Directory Path") = CassetteDir Then
-			'continue
-		ElseIf shell.RegRead("HKLM\SOFTWARE\Wow6432Node\IMPAC\PseudoDriver\GEN-GRO-CAS2\v1.0\Directory Path") = CassetteDir Then
-			'continue
-		ElseIf shell.RegRead("HKLM\SOFTWARE\Wow6432Node\IMPAC\PseudoDriver\GEN-GRO-CAS3\v1.0\Directory Path") = CassetteDir Then
-			'continue
-		Else
+	Do		
+		If Not shell.RegRead(CheckReg) = CassetteDir Then
 			If Not Counter = 0 Then Say "Cassette redirection was stopped."
-			If Couner = 0 Then Say "Failed to change cassette bin"
+			If Counter = 0 Then Say "Failed to change cassette bin"
 			Exit Do
 		End If
 
 		If Counter = 0 Then Counter = 1
+
+		Say "waiting..."
 
 		Set Folder = FSO.GetFolder(CassetteDir)
 		Set Files = Folder.Files
