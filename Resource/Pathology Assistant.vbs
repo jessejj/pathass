@@ -196,7 +196,7 @@ If Not GetPowerPath() Then Exit Function
 
 	Set shell = Nothing
 	
-	If GetCaseWindow = False Then MsgBox "Can't find window title " & "PowerPath Client " & PPTesting & "- [[AMP] Case"
+	'If GetCaseWindow = False Then MsgBox "Can't find window title " & "PowerPath Client " & PPTesting & "- [[AMP] Case"
 End Function
 
 Function GetPowerPath()
@@ -303,7 +303,7 @@ Sub Cassettes
 					If CassetteCount = TotalCassettes Then Say "Now okay to stop script."
 				
 				If LargeBatch Then
-					For Index = 1 to 11 'seconds (change this value to control how long it takes for the queue to be processed)
+					For Index = 1 to 13 'seconds (change this value to control how long it takes for the queue to be processed)
 						Wait 1
 					Next
 				End If

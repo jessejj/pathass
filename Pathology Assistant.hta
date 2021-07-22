@@ -16,7 +16,7 @@
     />
 <style>
 
-td {padding: 10px;}
+td {padding: 5px;}
 
 #footer {
     width:100%;
@@ -57,10 +57,8 @@ td {padding: 10px;}
 		buttons = [
 			'<button class="button" type="button" onclick="Cassettes()" title="Scripts for printing cassettes">Cassettes</button>',
 			'<button class="button" type="button" onclick="Commands()">Commands</button>',
-			'<button class="button" type="button" onclick="testSQL()">test SQL</button>'
-			//'<button class="button" type="button" onclick="oneClickSetup()" id="oneclickbutton" title="Apply all initial setup tasks for this PC" disabled >One Click Setup</button>',
-			//'<button class="button" type="button" onclick="PowerPathSetup()">PowerPath Setup</button>',
-			//'<button class="button" type="button" onclick="Support()" title="Email Jesse">Email Support</button>'
+			'<button class="button" type="button" onclick="testSQL()">SQL</button>',
+			'<button class="button" type="button" onclick="Support()" title="Email Support">Help</button>'
 		]
 
 		if (Supported) {
@@ -68,44 +66,17 @@ td {padding: 10px;}
 			for (i = 0; i < buttons.length; i++){
 			document.getElementById(i).innerHTML = buttons[i]
 			}
-
-			if (oneClickEligible()) {
-			document.getElementById("oneclickbutton").disabled = false
-			}
 		}
 
 		if (resetRegKeys("checkonly")) {
 			EnableResetButton()
 		}
-
-		dictionary = {
-			server:0,
-			database:1,
-			specimenlabeldevicename:2,
-			specimenlabelautoprint:3,
-			documentlabeldevicename:4,
-			documentlabelautoprint:5,
-			cassettedeviceID:6,
-			cassetteautoprint:7
-		}
-
-		dictionaryArr = [
-			"server",
-			"database",
-			"specimenlabeldevicename",
-			"specimenlabelautoprint",
-			"documentlabeldevicename",
-			"documentlabelautoprint",
-			"cassettedeviceID",
-			"cassetteautoprint"
-		]
 	})
 
 	function Support() {
 		supportURL = "https://outlook.office.com/mail/deeplink/compose?"
 		supportURL = supportURL + "to=jpelley@eorla.ca&subject=Pathology%20Assistant%20App&body=%0A%0A%0A%0A%0A%0A%0A%0A%0A%0AApp%20Version%20"+ PA.version
 		var shell = new ActiveXObject("wscript.shell")
-		//alert(supportURL)
 		shell.run(supportURL)
 	}		
 	
@@ -131,10 +102,8 @@ td {padding: 10px;}
 
 		adStateClosed = 0
 		ConnectionString = "Provider=SQLOLEDB.1;Data Source=" + ServerPath + ";Persist Security Info=True;User ID=" + UserID + ";password=" + thing + ";Initial Catalog=" + Database + ";"
-		alert(ConnectionString)
 
 		if (objConnection.State == adStateClosed) {
-			//objConnection.ConnectionString = ConnectionString
 			objConnection.Open(ConnectionString)
 		}
 
@@ -164,7 +133,6 @@ td {padding: 10px;}
 			'<button class="button" type="button" onclick="" disabled>Delete block</button>',
 			'<button class="button" type="button" onclick="DuplicateBlock()" >Duplicate block</button>',
 			'<button class="button" type="button" onclick="" disabled>Next block</button>',
-			'<button class="button" type="button" onclick="" disabled>My Signature</button>',
 			'<button class="button" type="button" onclick="MakeOrdersRush()" title="Toggle priority for PowerPath orders">Make All Orders Rush</button>',
 			'<button class="button" type="button" onclick="TestButton()" title="">test</button>',
 			'<button class="button" type="button" onclick="CaseFinder()" title="">Case Finder</button>'
@@ -196,8 +164,6 @@ td {padding: 10px;}
 		runScript("Case Finder", "CaseFinder")
 	}
 
-
-
 	function DuplicateBlock() {
 		runScript("Duplicate Block", "DuplicateBlock")
 	}
@@ -216,34 +182,36 @@ td {padding: 10px;}
 				CASoptionsHTML += "<option value = '" + availablePrinters[i] + "'>" + availablePrinters[i] + "</option>"
 			}
 
-			//PowerPathCassettesHTML = "Cassette Printer: <select onchange=EnableApplyButton() name = 'CAS' id = 'CAS'>" + CASoptionsHTML + "</select>"
-			PowerPathCassettesHTML = "<select onchange=EnableApplyButton() name = 'CAS' id = 'CAS'>" + CASoptionsHTML + "</select>"
-			BinHTML = "Exit bin: <select onchange=EnableApplyButton() name = 'ExitBin' id = 'ExitBin'> <option value = 'ExitBin1' selected>Bin 1</option><option value = 'ExitBin2'>Bin 2</option><option value = 'ExitBin3'>Bin 3</option></select>"
+			PowerPathCassettesHTML = "<select onchange=EnableRedirectButton() name = 'CAS' id = 'CAS'>" + CASoptionsHTML + "</select>"
 
 			document.getElementById("title").innerHTML = "Cassettes"
-			//document.getElementById("0").innerHTML = BinHTML
-			//document.getElementById("1").innerHTML = PowerPathCassettesHTML
 
 			document.getElementById("0").innerHTML = "Printer"
 			document.getElementById("b0").innerHTML = "Bin 2"
 			document.getElementById("c0").innerHTML = "Bin 3"
-			document.getElementById("b1").innerHTML = '<input type="radio" id="ExitBin2" name="ExitBin" value="ExitBin2">'
-			document.getElementById("c1").innerHTML = '<input type="radio" id="ExitBin3" name="ExitBin" value="ExitBin3">'
+			document.getElementById("b1").innerHTML = '<input onclick=EnableRedirectButton() type="radio" id="ExitBin2" name="ExitBin" value="ExitBin2">'
+			document.getElementById("c1").innerHTML = '<input onclick=EnableRedirectButton() type="radio" id="ExitBin3" name="ExitBin" value="ExitBin3">'
 
-			document.getElementById("r1").innerHTML = '<button class="button" type="button" onclick="ApplyCassettes()" title="Reset back to Bin 1" style="float: right;">Redirect</button>'
+			document.getElementById("r1").innerHTML = '<button class="button" type="button" id="RedirectButton" onclick="ApplyCassettes()" title="Reset back to Bin 1" style="float: right;" disabled>Redirect</button>'
 
 
 			document.getElementById("1").innerHTML = PowerPathCassettesHTML
 			
 			
 			document.getElementById("Apply").onclick = function() {ApplyCassettes()}
-			//document.getElementById("3").innerHTML = getCassettePrinters()
 
 		}
 	}
 
 	function EnableApplyButton(){
 		document.getElementById("Apply").disabled = false
+	}
+	function EnableRedirectButton(){
+		if (document.getElementById("CAS").value.length > 0 && document.getElementById("r0").innerHTML.length < 19 && (document.getElementById("ExitBin2").checked || document.getElementById("ExitBin3").checked)){
+			document.getElementById("RedirectButton").disabled = false
+		} else {
+			document.getElementById("RedirectButton").disabled = true
+		}
 	}
 
 	function EnableResetButton(){
@@ -281,7 +249,7 @@ td {padding: 10px;}
 				EnableResetButton()
 			}	
 
-			document.getElementById("Apply").disabled = true
+			document.getElementById("RedirectButton").disabled = true
 		}
 	}
 
@@ -314,9 +282,9 @@ td {padding: 10px;}
 			if (regread(regKey) == cassetteFolder) {
 				if (checkonly == "checkonly") {return true}
 				regwrite(regKey, printerDir)
-				document.getElementById("r0").innerHTML = '<div id="r0"></div>'
 			}
 		}
+		document.getElementById("r0").innerHTML = '<div id="r0"></div>'
 	}
 
 	function redirectCassettes(selectedPrinter) {
@@ -375,75 +343,6 @@ td {padding: 10px;}
 		}, 1000)	
 	}
 
-	function oneClickEligible() {
-		var registeredList = [
-			"OH163934", //civic left handed bench
-			"OH181525", //civic right handed bench
-			"OH182236", //civic wide bench 
-			"OH182644"] //civic labelase
-		shell = new ActiveXObject("Wscript.Shell")
-		ThisPC = shell.ExpandEnvironmentStrings("%COMPUTERNAME%")
-		//ThisPC = "OH163934" //for testing
-		var i
-		for (i = 0; i < registeredList.length; i++) {
-			if (ThisPC == registeredList[i]) {return true}
-		}
-
-		return false
-	}
-
-	function oneClickSetup(){
-		ClearIDs
-		register()
-	}
-
-	function register(key, write) {
-		keys = new Array
-		values = new Array 
-
-		keys[0]="HKCU/Software/Tamtron/PowerPath Client/Login Info/Server"
-		keys[1]="HKCU/Software/Tamtron/PowerPath Client/Login Info/Database"
-		keys[2]="HKCU/Software/Tamtron/PowerPath Client/Auto Print Specimen Label DIS Device Name"
-		keys[3]="HKCU/Software/Tamtron/PowerPath Client/Auto Print Specimen Label"
-		keys[4]="HKCU/Software/Tamtron/PowerPath Client/Auto Print Document Label DIS Device Name"
-		keys[5]="HKCU/Software/Tamtron/PowerPath Client/Auto Print Document Label"
-		keys[6]="HKCU/Software/Tamtron/PowerPath Client/Auto Print Cassette Device ID"
-		keys[7]="HKCU/Software/Tamtron/PowerPath Client/Auto Print Cassette"
-		
-		values[0]="CLPPATHDB01"
-		values[1]="PowerPath"
-		values[2]="CIV-ADM-APISCOE1"
-		values[3]="Yes"
-		values[4]="CIV-ADM-APISCOE1"
-		values[5]="Yes"
-		values[6]="62"
-		values[7]="Yes"
-
-		if (arguments.length == 1) {
-			if (regread(keys[dictionary[key]]) == values[dictionary[key]]){ //dictionary is a (global) object array, the string 'key' returns corresponding integer
-				return true
-			} else {
-				return false
-			}
-		}
-
-		if (arguments.length == 0) {
-			var i
-			for (i = 0; i < keys.length; i++) {
-				
-				if (regread(keys[i]) != values[i]) {
-					regwrite(keys[i],values[i])
-				}
-			}
-		}
-
-		if (arguments.length == 2) {
-			document.getElementById("r" + [dictionary[key]]).disabled = true //dictionary is an object array, string 'key' returns corresponding integer
-			regwrite(keys[dictionary[key]],values[dictionary[key]])
-		}
-
-	}
-
 	function regread(key) {
 		key = key.replace(/\//g,"\\")
 		shell = new ActiveXObject("wscript.shell")
@@ -461,39 +360,6 @@ td {padding: 10px;}
 		key = key.replace(/\//g,"\\")
 		shell.regwrite(key, value)
 	}
-
-	function PowerPathSetup() {
-		ClearIDs
-		document.getElementById("Back").disabled = false
-		document.getElementById("title").innerHTML = "PowerPath Setup"
-
-		setuplines = [
-			"Set server to CLPPATHDB01",
-			"Set database to PowerPath",
-			"Set specimen label printer",
-			"Auto print specimen labels",
-			"Set document label printer",
-			"Auto print document labels",
-			"Set cassette printer",
-			"Auto print cassettes"
-		]
-		var i
-		for (i = 0; i < setuplines.length; i++){
-			document.getElementById(i).innerHTML = setuplines[i]
-			buttonfunction = "register('" + dictionaryArr[i] + "','write')"
-			document.getElementById("r" + i).innerHTML = '<input type="button" id="button' + i + '" value="Apply" onclick="' + buttonfunction +'" style="float: right;" disabled>'
-		}
-
-		var i
-		for (i = 0; i < dictionaryArr.length; i++) {
-			if (register(dictionaryArr[i]) == false) {
-				if (i < 2 | oneClickEligible()){
-				document.getElementById("button"+i).disabled = false
-				}
-			}
-		}
-	}
-
 	
 </script>
 
